@@ -44,3 +44,7 @@ Route::get('newassesment', function () {
 Route::get('previewpage', function () {
     return view('admin/previewpage');
 })->name('previewpage');
+
+Route::get('forgetpassword', function () {
+    return view('auth/forgetpassword');
+})->name('forgetpassword');
