@@ -25,4 +25,24 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function definecategories()
+    {
+        return view('admin/definecategories');
+    }
+
+    public function mycategories()
+    {
+        return view('admin/mycategories');
+    }
+
+    public function newassesment()
+    {
+        return view('admin/newassesment');
+    }
+
+    public function previewpage()
+    {
+        return view('admin/previewpage');
+    }
 }
