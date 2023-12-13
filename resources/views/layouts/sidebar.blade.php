@@ -25,31 +25,37 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="addfeedback.html">Define Categories</a>
+                                <a href="{{route('definecategories')}}">Define Categories</a>
                             </li>
                             <li>
-                                <a href="listview.html">My Categories</a>
+                                <a href="{{route('mycategories')}}">My Categories</a>
                             </li>
                             <li>
-                                <a href="sidebarlistview.html">New Assessment</a>
+                                <a href="{{route('newassesment')}}">New Assessment</a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <li>
-                    <a href="{{route('login')}}">
-                        <i class="bi bi-arrow-bar-right"></i>
-                        <span class="menu-text">Logout</span>
-                    </a>
+                    <a href="{{ route('logout') }}"
+                    onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                                     <i class="bi bi-arrow-bar-right"></i>
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                 </li>
                 <li>
-                    <a href="{{route('login')}}">
+                    <a href="{{route('log-in')}}">
                         <i class="bi bi-file-lock"></i>
                         <span class="menu-text">Login</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{route('register')}}">
+                    <a href="{{route('signup')}}">
                         <i class="bi bi-file-person"></i>
                         <span class="menu-text">Register</span>
                     </a>

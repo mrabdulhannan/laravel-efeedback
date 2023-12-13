@@ -9,31 +9,19 @@
     <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap/bootstrap-icons.css') }}">
 </head>
 <div class="login-container">
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('password.update') }}">
         @csrf
-        <div class="login-box">
-            <div class="login-form">
-                <div class="mb-3">
-                    <label for="name" class="form-label">{{ __('Name') }}</label>
 
-                    <div class="">
-                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
-                            name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                        @error('name')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                </div>
+        <form action="index.html">
+            <div class="login-box">
+                {{-- <input type="hidden" name="token" value="{{ $token }}"> --}}
 
                 <div class="mb-3">
                     <label for="email" class="form-label">{{ __('Email Address') }}</label>
 
                     <div class="">
                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                            name="email" value="{{ old('email') }}" required autocomplete="email">
+                            name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -68,18 +56,15 @@
                     </div>
                 </div>
 
-				<div class="login-form-actions">
-                    <button type="submit" class="btn"> <span class="icon"> <i
-                                class="bi bi-arrow-right-circle"></i> </span>
-                        Signup</button>
-                </div>
-                <div class="login-form-footer">
-                    <div class="additional-link">
-                        Already have an account? <a href="{{ route('login') }}"> Login</a>
+                <div class=" mb-0">
+                    <div class="offset-md-4">
+                        <button type="submit" class="btn btn-primary">
+                            {{ __('Reset Password') }}
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-    <!-- Login box end -->
 </div>
+</form>
+</div>
+

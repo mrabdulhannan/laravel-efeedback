@@ -14,36 +14,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('home');
+    return view('welcome');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('login', function () {
+Route::get('/definecategories', [App\Http\Controllers\HomeController::class, 'definecategories'])->name('definecategories');
+
+Route::get('/mycategories', [App\Http\Controllers\HomeController::class, 'mycategories'])->name('mycategories');
+
+Route::get('/newassesment', [App\Http\Controllers\HomeController::class, 'newassesment'])->name('newassesment');
+
+Route::get('/previewpage', [App\Http\Controllers\HomeController::class, 'previewpage'])->name('previewpage');
+
+
+Route::get('log-in', function () {
     return view('auth/login');
-})->name('login');
+})->name('log-in');
 
-Route::get('register', function () {
+Route::get('signup', function () {
     return view('auth/register');
-})->name('register');
-
-Route::get('definecategories', function () {
-    return view('admin/definecategories');
-})->name('definecategories');
-
-Route::get('mycategories', function () {
-    return view('admin/mycategories');
-})->name('mycategories');
-
-Route::get('newassesment', function () {
-    return view('admin/newassesment');
-})->name('newassesment');
-
-Route::get('previewpage', function () {
-    return view('admin/previewpage');
-})->name('previewpage');
+})->name('signup');
 
 Route::get('forgetpassword', function () {
     return view('auth/forgetpassword');
