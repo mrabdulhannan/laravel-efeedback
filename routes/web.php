@@ -21,7 +21,9 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/definecategories', [App\Http\Controllers\HomeController::class, 'definecategories'])->name('definecategories');
+Route::get('/definecategories', [App\Http\Controllers\CategoriesController::class, 'create'])->name('definecategories');
+
+Route::post('/storecategories', [App\Http\Controllers\CategoriesController::class, 'store'])->name('storecategories');
 
 Route::get('/mycategories', [App\Http\Controllers\HomeController::class, 'mycategories'])->name('mycategories');
 

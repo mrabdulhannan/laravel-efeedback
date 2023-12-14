@@ -2,7 +2,7 @@
 <nav class="sidebar-wrapper">
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
-        <a href="{{route('home')}}" class="logo">
+        <a href="{{ route('home') }}" class="logo">
             <h4>eFeedback</h4>
         </a>
     </div>
