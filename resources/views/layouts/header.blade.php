@@ -7,7 +7,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <i class="bi bi-house"></i>
-                        <a href="{{route('home')}}">Home</a>
+                        <a href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="breadcrumb-item breadcrumb-active" aria-current="page">Dashboard</li>
                 </ol>

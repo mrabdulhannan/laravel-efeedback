@@ -9,30 +9,41 @@
     <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap/bootstrap-icons.css') }}">
 </head>
 <div class="login-container">
-    <!-- Login box start -->
-    <form action="index.html">
+    <form method="POST" action="{{ route('password.email') }}">
+        @csrf
         <div class="login-box">
             <div class="login-form">
-                <a href="index.html" class="login-logo">
-                    <img src="{{ asset('assets/img') }}/logo.svg" alt="Vico Admin" />
-                </a>
                 <div class="login-welcome">
-                    In order to access your Vivo account,<br />please enter the email id you provided during the
+                    In order to access your account,<br />please enter the email id you provided during the
                     registration
                     process.
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" placeholder="Enter your email">
+                    <label for="email" class="form-label">{{ __('Email Address') }}</label>
+
+                    <div class="">
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                            name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
                 </div>
-                <div class="login-form-actions">
-                    <button type="submit" class="btn"> <span class="icon"> <i
+
+                <div class="mb-0">
+                    <div class="login-form-actions">
+                        <button type="submit" class="btn">
+                            <span class="icon"> <i
                                 class="bi bi-arrow-right-circle"></i> </span>
-                        Submit</button>
+                            {{ __('Submit') }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
     <!-- Login box end -->
 </div>
-

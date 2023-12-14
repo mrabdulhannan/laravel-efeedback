@@ -41,4 +41,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function definecategories(){
+        return $this->hasMany(DefineCategories::class)->orderBy('created_at', 'DESC');
+    }
 }

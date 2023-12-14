@@ -14,8 +14,8 @@
                                     <div class="card-body">
                                         <h2 class="card-title">Define Categories</h2>
     
-                                        <form action="" method="post">
-    
+                                        <form action="{{route('storecategories')}}" enctype="multipart/form-data" method="POST">
+                                            @csrf
                                             <!-- Title Input -->
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Title</label>
@@ -32,7 +32,7 @@
                                             <div class="mb-3">
                                                 <label for="group" class="form-label">Group</label>
                                                 <div class="input-group">
-                                                    <select class="form-select" id="group" name="type" required>
+                                                    <select class="form-select" id="group" name="group" required>
                                                         <option value="option1">Table and Content</option>
                                                         <option value="option2">Referencing &amp; Citation</option>
                                                         <option value="option3">Option 3</option>
