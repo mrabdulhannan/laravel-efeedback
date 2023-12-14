@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\DefineCategories;
 
 class CategoriesController extends Controller
 {
@@ -35,4 +36,34 @@ class CategoriesController extends Controller
 
         return redirect('/definecategories');
     }
+    public function deleteCategory($id)
+    {
+        // Find the category by ID and delete it
+        $category = DefineCategories::findOrFail($id);
+        $category->delete();
+
+        return redirect()->route('mycategories')->with('success', 'Category deleted successfully');
+    }
+
+    public function editCategory($id)
+    {
+    $category = DefineCategories::findOrFail($id);
+
+    return view('admin.editcategory', ['category' => $category]);
+    }
+
+
+    public function updateCategory(Request $request, $id)
+    {
+        $category = DefineCategories::findOrFail($id);
+
+        $category->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'group' => $request->input('group'),
+        ]);
+
+        return redirect()->route('mycategories')->with('success', 'Category updated successfully');
+    }
+
 }
