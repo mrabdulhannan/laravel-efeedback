@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,8 @@ Route::get('/newassesment', [App\Http\Controllers\HomeController::class, 'newass
 
 Route::get('/previewpage', [App\Http\Controllers\HomeController::class, 'previewpage'])->name('previewpage');
 
+Route::get('/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
+
 
 Route::get('log-in', function () {
     return view('auth/login');
@@ -43,3 +47,7 @@ Route::get('signup', function () {
 Route::get('forgetpassword', function () {
     return view('auth/forgetpassword');
 })->name('forgetpassword');
+
+
+Route::post('/updatepassword', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('updatepassword');
+

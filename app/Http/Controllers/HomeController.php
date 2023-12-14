@@ -45,4 +45,8 @@ class HomeController extends Controller
     {
         return view('admin/previewpage');
     }
+
+    public function updatepassword(){
+        return view('admin/updatepassword');
+    }
 }
