@@ -3,6 +3,11 @@
 @section('content')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
         <!-- Content wrapper start -->
         <div class="content-wrapper">
             <!-- Row start -->
@@ -84,4 +89,5 @@
         </div>
         <!-- Content wrapper end -->
     </div>
+    
 @endsection

@@ -36,6 +36,19 @@
                         </ul>
                     </div>
                 </li>
+                
+                <li>
+                    <a href="{{route('log-in')}}">
+                        <i class="bi bi-file-lock"></i>
+                        <span class="menu-text">Login</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('updatepassword')}}">
+                        <i class="bi bi-file-person"></i>
+                        <span class="menu-text">Update Password</span>
+                    </a>
+                </li>
                 <li>
                     <a href="{{ route('logout') }}"
                     onclick="event.preventDefault();
@@ -47,18 +60,6 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
-                </li>
-                <li>
-                    <a href="{{route('log-in')}}">
-                        <i class="bi bi-file-lock"></i>
-                        <span class="menu-text">Login</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{route('signup')}}">
-                        <i class="bi bi-file-person"></i>
-                        <span class="menu-text">Register</span>
-                    </a>
                 </li>
             </ul>
         </div>
