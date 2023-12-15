@@ -66,4 +66,13 @@ class CategoriesController extends Controller
         return redirect()->route('mycategories')->with('success', 'Category updated successfully');
     }
 
+    public function showData(Request $request)
+    {
+        // Retrieve the selectedData from the query parameters
+        $selectedData = json_decode($request->query('selectedData'), true);
+
+        // Return the view with the received data
+        return view('admin.previewpage', ['selectedData' => $selectedData]);
+    }
+
 }

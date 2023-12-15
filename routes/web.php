@@ -31,7 +31,7 @@ Route::get('/mycategories', [App\Http\Controllers\HomeController::class, 'mycate
 
 Route::get('/newassesment', [App\Http\Controllers\HomeController::class, 'newassesment'])->name('newassesment');
 
-Route::get('/previewpage', [App\Http\Controllers\HomeController::class, 'previewpage'])->name('previewpage');
+Route::get('/previewpage', [App\Http\Controllers\CategoriesController::class, 'showData'])->name('previewpage');
 
 Route::get('/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
 

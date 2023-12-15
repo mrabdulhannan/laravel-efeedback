@@ -24,6 +24,7 @@
                         <div class="col-9">
                             <div id="selectedItemData" contenteditable="true">
                                 <!-- Selected item's data will be dynamically added here -->
+                                
                             </div>
                             <!-- Button to Send Selected Data -->
                         </div>
@@ -45,27 +46,7 @@
             const selectedItemData = document.getElementById('selectedItemData');
             const selectedItems = new Set();
 
-            const items = [{
-                    id: 1,
-                    title: 'Table of Contents provided',
-                    description: 'The table of contents for this business report has been laid out clearly. It is always very helpful for any business report or essay, as it gives the reader a good overview of what to expect and how the rest of the report has been structured and presented',
-                    type: 'Table of Content'
-                },
-                {
-                    id: 2,
-                    title: 'No Table of Contents',
-                    description: 'The table of contents for the report has not been presented. It is always very helpful for any report or essay, as it gives the reader a clear overview of what to expect and how the rest of the report has been structured and presented. In order to generate this, please use Microsoft Word’s built-in wizard instead of typing it manually.It will generate the table of contents for you very conveniently and can update it as well.Here is a link on YouTube that you can watch to learn this skill: https://www.youtube.com/watch?v=UIQdHzHh5c0',
-                    type: 'Table of Content'
-                },
-                {
-                    id: 3,
-                    title: 'Table of Contents without use of the MS Wizard',
-                    description: 'While the table of contents for this report has been laid out, please note that for future purposes, try using Microsoft Word’s built-in wizard instead of typing it manually. It will generate the table of contents for you very conveniently and can update it as well. Here is a link on YouTube that you can watch to learn this skill: https://www.youtube.com/watch?v=UIQdHzHh5c0',
-                    type: 'Table of Content'
-                },
-                // Add more items as needed
-            ];
-
+            const items = <?= Auth::user()->definecategories?>
             // Populate sidebar with item IDs
             items.forEach(item => {
                 const listItem = document.createElement('li');
@@ -133,11 +114,11 @@
             // Button click event handler
             document.getElementById('sendDataButton').addEventListener('click', function() {
                 // Get data of selected items
-                // const selectedData = getSelectedData();
+                const selectedData = getSelectedData();
 
                 // Redirect to another page with selected data
-                // window.location.href = '/another-page?selectedData=' + encodeURIComponent(JSON.stringify(selectedData));
-                window.location.href = '{{route('previewpage')}}';
+                window.location.href = '/previewpage?selectedData=' + encodeURIComponent(JSON.stringify(selectedData));
+                // window.location.href = '{{route('previewpage')}}';
             });
 
             function getSelectedData() {
