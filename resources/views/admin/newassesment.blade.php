@@ -24,7 +24,7 @@
                         <div class="col-9">
                             <div id="selectedItemData" contenteditable="true">
                                 <!-- Selected item's data will be dynamically added here -->
-                                
+
                             </div>
                             <!-- Button to Send Selected Data -->
                         </div>
@@ -40,13 +40,13 @@
 @endsection
 
 @push('script-page-level')
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const itemList = document.getElementById('itemList');
             const selectedItemData = document.getElementById('selectedItemData');
             const selectedItems = new Set();
 
-            const items = <?= Auth::user()->definecategories?>
+            const items = <?= Auth::user()->definecategories ?>
             // Populate sidebar with item IDs
             items.forEach(item => {
                 const listItem = document.createElement('li');
@@ -159,6 +159,96 @@
                     }
                 }
             });
+        });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemList = document.getElementById('itemList');
+            const selectedItemData = document.getElementById('selectedItemData');
+            const selectedItems = new Set();
+
+            const items = <?= Auth::user()->definecategories ?>;
+
+            // Populate sidebar with item IDs
+            items.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.textContent = `${item.title}`;
+                listItem.addEventListener('click', () => toggleSelectedItem(item));
+                itemList.appendChild(listItem);
+            });
+
+            function toggleSelectedItem(item) {
+                // Toggle the selected state
+                if (selectedItems.has(item.id)) {
+                    selectedItems.delete(item.id);
+                } else {
+                    selectedItems.add(item.id);
+                }
+
+                // Render selected items' data in the main content area
+                renderSelectedItemsData();
+            }
+
+            function renderSelectedItemsData() {
+                // Clear previous content
+                selectedItemData.innerHTML = '';
+
+                // Append data for selected items to the main content area
+                selectedItems.forEach(itemId => {
+                    const selectedItem = items.find(item => item.id === itemId);
+                    if (selectedItem) {
+                        selectedItemData.innerHTML += `
+                    <div class="container mt-4 border rounded p-2">
+                        <div class="row ">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="title_${selectedItem.id}" name="title" value="${selectedItem.title}">
+                                    <textarea class="form-control" id="description_${selectedItem.id}" name="description" rows="4">${selectedItem.description}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    }
+                });
+            }
+
+            // Button click event handler
+            document.getElementById('sendDataButton').addEventListener('click', function() {
+                // Get data of selected items
+                const selectedData = getSelectedData();
+
+                // Redirect to another page with selected data
+                window.location.href = '/previewpage?selectedData=' + encodeURIComponent(JSON.stringify(
+                    selectedData));
+            });
+
+            function getSelectedData() {
+                const selectedData = [];
+
+                // Collect data for selected items
+                selectedItems.forEach(itemId => {
+                    const selectedItem = items.find(item => item.id === itemId);
+                    if (selectedItem) {
+                        // Get the modified values from the input fields
+                        const modifiedTitle = document.getElementById(`title_${selectedItem.id}`).value;
+                        const modifiedDescription = document.getElementById(
+                            `description_${selectedItem.id}`).value;
+
+                        // Add modified data to the selectedData array
+                        selectedData.push({
+                            id: selectedItem.id,
+                            title: modifiedTitle,
+                            description: modifiedDescription,
+                            type: selectedItem.type,
+                        });
+                    }
+                });
+
+                return selectedData;
+            }
         });
     </script>
 @endpush
