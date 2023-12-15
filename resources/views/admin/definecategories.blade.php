@@ -33,8 +33,8 @@
                                                 <label for="group" class="form-label">Group</label>
                                                 <div class="input-group">
                                                     <select class="form-select" id="group" name="group" required>
-                                                        <option value="option1">Table and Content</option>
-                                                        <option value="option2">Referencing &amp; Citation</option>
+                                                        <option value="Table and Content">Table and Content</option>
+                                                        <option value="Referencing and Citation">Referencing and Citation</option>
                                                         <option value="option3">Option 3</option>
                                                     </select>
                                                 </div>

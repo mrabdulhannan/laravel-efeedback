@@ -7,7 +7,7 @@
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+        @endif
         <!-- Content wrapper start -->
         <div class="content-wrapper">
             <!-- Row start -->

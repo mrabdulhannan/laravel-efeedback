@@ -31,7 +31,7 @@ Route::get('/mycategories', [App\Http\Controllers\HomeController::class, 'mycate
 
 Route::get('/newassesment', [App\Http\Controllers\HomeController::class, 'newassesment'])->name('newassesment');
 
-Route::get('/previewpage', [App\Http\Controllers\HomeController::class, 'previewpage'])->name('previewpage');
+Route::get('/previewpage', [App\Http\Controllers\CategoriesController::class, 'showData'])->name('previewpage');
 
 Route::get('/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
 
@@ -50,4 +50,10 @@ Route::get('forgetpassword', function () {
 
 
 Route::post('/updatepassword', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('updatepassword');
+
+Route::delete('/deleteCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'deleteCategory'])->name('deleteCategory');
+
+Route::put('/updateCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'updateCategory'])->name('updateCategory');
+Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'editCategory'])->name('editCategory');
+
 
