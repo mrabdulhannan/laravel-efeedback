@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @push('stylesheet-page-level')
+<style>
+    li.list-group-item.selected {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
 @endpush
 @section('content')
     <!-- Row start -->
@@ -160,9 +166,4 @@
 @endpush
 
 
-<style>
-    li.list-group-item.selected {
-        background-color: #007bff;
-        color: white;
-    }
-</style>
+
