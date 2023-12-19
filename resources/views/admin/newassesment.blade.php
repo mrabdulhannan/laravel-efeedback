@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @push('stylesheet-page-level')
-<style>
-    li.list-group-item.selected {
-        background-color: #007bff;
-        color: white;
-    }
-</style>
+    <style>
+        li.list-group-item.selected {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 @endpush
 @section('content')
     <!-- Row start -->
@@ -41,6 +41,9 @@
         </div>
     </div>
     <!-- Row end -->
+@endsection
+
+@push('script-page-level')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const itemList = document.getElementById('itemList');
@@ -92,14 +95,14 @@
                         <div class="row ">
                             <div class="col-md-12">
                                 <div class="mb-3">
-                                    <input type="text" class="form-control mb-2" id="title" name="title" value="${selectedItem.title}">
-                                    <textarea class="form-control tinymce" id="description" name="description" rows="6">${selectedItem.description}</textarea>
+                                    <input type="text" class="form-control mb-2" id="title_${selectedItem.id}" name="title" value="${selectedItem.title}">
+                                    <textarea class="form-control tinymce" id="description_${selectedItem.id}" name="description" rows="6">${selectedItem.description}</textarea>
                                     <hr />                                                                                    
                                 </div>
                             </div>
                         </div>
                     </div>
-                `;
+`;
                     }
                 });
 
@@ -159,11 +162,4 @@
             }
         });
     </script>
-@endsection
-
-@push('script-page-level')
-
 @endpush
-
-
-
