@@ -16,11 +16,13 @@
                     @if (!empty($selectedData))
                         <div class="list-group">
                             <div id="receivedDataContainer" class="list-group list-group-item">
-                                @foreach ($selectedData as $item)
-                                    <!-- Data will be dynamically added here -->
-                                    <h5 class="mt-2">{{ $item['title'] }}</h5>
-                                    <p class="mb-2">{{ $item['description'] }}</p>
-                                @endforeach
+                                <textarea class="tinymce">
+                                    @foreach ($selectedData as $item)
+                                    <h5>{{ $item['title'] }}</h5>
+                                    <p>{{ $item['description'] }}</p>
+                                    @endforeach
+                                </textarea>
+
                             </div>
                         </div>
                     @else
@@ -36,32 +38,35 @@
     </div>
 
     @push('script-page-level')
+        <script src="{{ asset('assets/tinymce/tinymce.min.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Get the button element
+                tinymce.init({
+                    selector: 'textarea.tinymce',
+                    plugins: ['link'],
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link',
+                    branding: false,
+                    menubar: false,
+                });
+
                 var copyContentBtn = document.getElementById('copyContentBtn');
 
-                // Add click event listener to the button
                 copyContentBtn.addEventListener('click', function() {
-                    // Get the container element that holds the received data
-                    var receivedDataContainer = document.getElementById('receivedDataContainer');
+                    var editorHtmlContent = tinymce.activeEditor.getContent({
+                        format: 'html'
+                    });
 
-                    // Create a range object to select the content
-                    var range = document.createRange();
-                    range.selectNode(receivedDataContainer);
+                    var tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = editorHtmlContent;
 
-                    // Select the content
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
+                    document.body.appendChild(tempTextArea);
 
-                    // Copy the selected content to the clipboard
+                    tempTextArea.select();
                     document.execCommand('copy');
 
-                    // Clear the selection
-                    window.getSelection().removeAllRanges();
+                    document.body.removeChild(tempTextArea);
 
-                    // Alert the user
-                    alert('Content has been copied successfully.');
+                    alert('Content has been copied as HTML successfully.');
                 });
             });
         </script>
