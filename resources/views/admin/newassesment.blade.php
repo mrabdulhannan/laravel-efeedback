@@ -44,53 +44,51 @@
 @endsection
 
 @push('script-page-level')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const itemList = document.getElementById('itemList');
-            const selectedItemData = document.getElementById('selectedItemData');
-            const selectedItems = new Set();
-            const itemElements = {}; // to keep track of list items
+<script>
+    $(document).ready(function() {
+        const itemList = $('#itemList');
+        const selectedItemData = $('#selectedItemData');
+        const selectedItems = new Set();
+        const itemElements = {}; // to keep track of list items
 
-            const items = <?= Auth::user()->definecategories ?>;
+        const items = <?= Auth::user()->definecategories ?>;
 
-            function renderSidebar() {
-                // Clear previous content
-                itemList.innerHTML = '';
+        function renderSidebar() {
+            // Clear previous content
+            itemList.empty();
 
-                // Append data for selected items to the main content area
-                items.forEach(item => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'list-group-item';
-                    listItem.textContent = `${item.title}`;
-                    listItem.addEventListener('click', () => toggleSelectedItem(item));
-                    itemList.appendChild(listItem);
+            // Append data for selected items to the main content area
+            items.forEach(item => {
+                const listItem = $('<li>').addClass('list-group-item').text(`${item.title}`);
+                listItem.click(() => toggleSelectedItem(item));
+                itemList.append(listItem);
 
-                    // Keep track of list items
-                    itemElements[item.id] = listItem;
-                });
+                // Keep track of list items
+                itemElements[item.id] = listItem[0];
+            });
+        }
+
+        function toggleSelectedItem(item) {
+            // Toggle the selected state
+            if (selectedItems.has(item.id)) {
+                selectedItems.delete(item.id);
+            } else {
+                selectedItems.add(item.id);
             }
 
-            function toggleSelectedItem(item) {
-                // Toggle the selected state
-                if (selectedItems.has(item.id)) {
-                    selectedItems.delete(item.id);
-                } else {
-                    selectedItems.add(item.id);
-                }
+            // Render selected items' data in the main content area
+            renderSelectedItemsData();
+        }
 
-                // Render selected items' data in the main content area
-                renderSelectedItemsData();
-            }
+        function renderSelectedItemsData() {
+            // Clear previous content
+            selectedItemData.empty();
 
-            function renderSelectedItemsData() {
-                // Clear previous content
-                selectedItemData.innerHTML = '';
-
-                // Append data for selected items to the main content area
-                selectedItems.forEach(itemId => {
-                    const selectedItem = items.find(item => item.id === itemId);
-                    if (selectedItem) {
-                        selectedItemData.innerHTML += `
+            // Append data for selected items to the main content area
+            selectedItems.forEach(itemId => {
+                const selectedItem = items.find(item => item.id === itemId);
+                if (selectedItem) {
+                    selectedItemData.append(`
                     <div class="container">
                         <div class="row ">
                             <div class="col-md-12">
@@ -102,64 +100,63 @@
                             </div>
                         </div>
                     </div>
-`;
-                    }
-                });
-
-                // Highlight the selected items in the sidebar
-                highlightSelectedItems();
-            }
-
-
-            function highlightSelectedItems() {
-                // Remove 'selected' class from all items
-                Object.values(itemElements).forEach(item => item.classList.remove('selected'));
-
-                // Add 'selected' class to the selected items
-                selectedItems.forEach(itemId => {
-                    if (itemElements[itemId]) {
-                        itemElements[itemId].classList.add('selected');
-                    }
-                });
-            }
-
-            // Initial rendering of the sidebar
-            renderSidebar();
-
-            // Button click event handler
-            document.getElementById('sendDataButton').addEventListener('click', function() {
-                // Get data of selected items
-                const selectedData = getSelectedData();
-
-                // Redirect to another page with selected data
-                window.location.href = '/previewpage?selectedData=' + encodeURIComponent(JSON.stringify(
-                    selectedData));
+`);
+                }
             });
 
-            function getSelectedData() {
-                const selectedData = [];
+            // Highlight the selected items in the sidebar
+            highlightSelectedItems();
+        }
 
-                // Collect data for selected items
-                selectedItems.forEach(itemId => {
-                    const selectedItem = items.find(item => item.id === itemId);
-                    if (selectedItem) {
-                        // Get the modified values from the input fields
-                        const modifiedTitle = document.getElementById(`title_${selectedItem.id}`).value;
-                        const modifiedDescription = document.getElementById(
-                            `description_${selectedItem.id}`).value;
+        function highlightSelectedItems() {
+            // Remove 'selected' class from all items
+            Object.values(itemElements).forEach(item => $(item).removeClass('selected'));
 
-                        // Add modified data to the selectedData array
-                        selectedData.push({
-                            id: selectedItem.id,
-                            title: modifiedTitle,
-                            description: modifiedDescription,
-                            type: selectedItem.type,
-                        });
-                    }
-                });
+            // Add 'selected' class to the selected items
+            selectedItems.forEach(itemId => {
+                if (itemElements[itemId]) {
+                    $(itemElements[itemId]).addClass('selected');
+                }
+            });
+        }
 
-                return selectedData;
-            }
+        // Initial rendering of the sidebar
+        renderSidebar();
+
+        // Button click event handler
+        $('#sendDataButton').click(function() {
+            // Get data of selected items
+            const selectedData = getSelectedData();
+
+            // Redirect to another page with selected data
+            window.location.href = '/previewpage?selectedData=' + encodeURIComponent(JSON.stringify(
+                selectedData));
         });
-    </script>
+
+        function getSelectedData() {
+            const selectedData = [];
+
+            // Collect data for selected items
+            selectedItems.forEach(itemId => {
+                const selectedItem = items.find(item => item.id === itemId);
+                if (selectedItem) {
+                    // Get the modified values from the input fields
+                    const modifiedTitle = $(`#title_${selectedItem.id}`).val();
+                    const modifiedDescription = $(`#description_${selectedItem.id}`).val();
+
+                    // Add modified data to the selectedData array
+                    selectedData.push({
+                        id: selectedItem.id,
+                        title: modifiedTitle,
+                        description: modifiedDescription,
+                        type: selectedItem.type,
+                    });
+                }
+            });
+
+            return selectedData;
+        }
+    });
+</script>
 @endpush
+
