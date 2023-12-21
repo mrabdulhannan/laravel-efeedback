@@ -49,13 +49,11 @@
                                                     </tr>
                                                     <tr>
                                                         <th width="250" valign="middle">Today’s Date</th>
-                                                        <td><input type="text" class="form-control"
-                                                                value="12th December, 2023" /></td>
+                                                        <td><input type="date" class="form-control" id="today" name="today" value="<?php echo date('Y-m-d'); ?>"></td>
                                                     </tr>
                                                     <tr>
                                                         <th width="250" valign="middle">Targeted date of completion</th>
-                                                        <td><input type="text" class="form-control"
-                                                                value="16th December, 2023" /></td>
+                                                        <td><input type="date" class="form-control" id="completion-date" name="completion-date" value="<?php echo date('Y-m-d'); ?>"></td>
                                                     </tr>
                                                     <tr>
                                                         <th width="250" valign="middle">Days remaining</th>
@@ -64,7 +62,7 @@
                                                     </tr>
                                                     <tr>
                                                         <th width="250" valign="middle">Provided feedback</th>
-                                                        <td><input type="text" class="form-control" value="20" />
+                                                        <td><input type="text" class="form-control" value="<?= count(Auth::user()->definecategories) ?>" />
                                                         </td>
                                                     </tr>
                                                 </table>
