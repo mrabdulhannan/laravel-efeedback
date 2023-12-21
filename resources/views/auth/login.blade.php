@@ -29,9 +29,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <div class="d-flex justify-content-between">
                     <label for="password" class="form-label">{{ __('Password') }}</label>
-
+                    @if (Route::has('password.request'))
+                    <a href="{{ route('forgetpassword') }}" class="btn-link ml-auto">Forgot password?</a>
+                    @endif
+                    </div>
                     <div class="">
+                        
                         <input id="password" type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
                             autocomplete="current-password">
@@ -62,11 +67,7 @@
                                 class="bi bi-arrow-right-circle"></i> </span>
                         {{ __('Login') }}
 					</button>
-                    @if (Route::has('password.request'))
-                        <a class="btn btn-link" href="{{ route('forgetpassword') }}">
-                            {{ __('Forgot Your Password?') }}
-                        </a>
-                    @endif
+                    
                 </div>
                 <div class="login-form-footer">
                     <div class="additional-link">
