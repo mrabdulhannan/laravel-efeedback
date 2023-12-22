@@ -45,4 +45,8 @@ class User extends Authenticatable
     public function definecategories(){
         return $this->hasMany(DefineCategories::class)->orderBy('created_at', 'DESC');
     }
+
+    public function definetopic(){
+        return $this->hasMany(Topics::class)->orderBy('created_at', 'DESC');
+    }
 }
