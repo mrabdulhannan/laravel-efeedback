@@ -56,4 +56,12 @@ Route::delete('/deleteCategory/{id}', [App\Http\Controllers\CategoriesController
 Route::put('/updateCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'updateCategory'])->name('updateCategory');
 Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'editCategory'])->name('editCategory');
 
-
+// Topics Relevent Routes
+Route::get('/definetopic', [App\Http\Controllers\TopicsController::class, 'create'])->name('definetopic');
+Route::post('/storetopic', [App\Http\Controllers\TopicsController::class, 'store'])->name('storetopic');
+Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopic'])->name('updatetopic');
+Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopicpost'])->name('updatetopicpost');
+Route::post('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.post');
+Route::get('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.get');
+Route::get('/alltopics', [App\Http\Controllers\TopicsController::class, 'showalltopics'])->name('alltopics');
+Route::delete('/deletetopic/{id}', [App\Http\Controllers\TopicsController::class, 'deletetopic'])->name('deletetopic');

@@ -36,6 +36,23 @@
                         </ul>
                     </div>
                 </li>
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-chat-right-text"></i>
+                        <span class="menu-text">Topics Mgmt</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{route('definetopic')}}">Add Topic</a>
+                            </li>
+                            <li>
+                                <a href="{{route('alltopics')}}">All Topics</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 
                 <li>
                     <a href="{{route('log-in')}}">
