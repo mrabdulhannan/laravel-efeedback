@@ -18,6 +18,35 @@
                             <form action="{{ route('updateCategory', ['id' => $category->id]) }}" method="POST">
                                 @csrf
                                 @method('PUT')
+                                <!-- Add an empty group dropdown that will be populated dynamically -->
+                                <div class="mb-3">
+                                    <label for="group" class="form-label">Group</label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="group" name="group" required>
+                                            <!-- The groups for the selected topic will be dynamically populated here -->
+                                        </select>
+                                    </div>
+                                </div> --}}
+                                <!-- Add a data- attribute to store the groups for each topic -->
+                                <select class="form-select" id="topic" name="topic" required>
+                                    @foreach ($topics as $topic)
+                                        <option value="{{ $topic->id }}"
+                                            data-groups="{{ implode(',', explode(',', $topicGroups[$topic->id] ?? '')) }}"
+                                            {{ $selectedTopic && $topic->id == $selectedTopic->id ? 'selected' : '' }}>
+                                            {{ $topic->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <!-- Add an empty group dropdown that will be populated dynamically -->
+                                <div class="mb-3">
+                                    <label for="group" class="form-label">Group</label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="group" name="group" required>
+                                            <!-- The groups for the selected topic will be dynamically populated here -->
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <!-- Title Input -->
                                 <div class="mb-3">
@@ -32,23 +61,6 @@
                                     <textarea class="form-control" id="description" name="description" rows="4" required>{{ $category->description }}</textarea>
                                 </div>
 
-                                <!-- Type Dropdown -->
-                                <div class="mb-3">
-                                    <label for="group" class="form-label">Group</label>
-                                    <div class="input-group">
-                                        <select class="form-select" id="group" name="group" required>
-                                            <option value="Table and Content"
-                                                {{ $category->group === 'Table and Content' ? 'selected' : '' }}>Table and
-                                                Content</option>
-                                            <option value="Referencing and Citation"
-                                                {{ $category->group === 'Referencing and Citation' ? 'selected' : '' }}>
-                                                Referencing and Citation</option>
-                                            <option value="option3" {{ $category->group === 'option3' ? 'selected' : '' }}>
-                                                Option 3</option>
-                                        </select>
-                                    </div>
-                                </div>
-
                                 <!-- Save Button -->
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
@@ -58,13 +70,44 @@
             </div>
         </div>
     </div>
-    @endsection
+    <!-- Content wrapper scroll end -->
+@endsection
 
-    @push('script-page-level')
-        {{-- <script>
-    function editCategory(categoryId) {
-        // Assuming you have a route for editing
-        window.location.href = "{{ route('editCategory') }}/" + categoryId;
-    }
-</script> --}}
-    @endpush
+@push('script-page-level')
+    <script>
+        // JavaScript to handle dynamic group dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            var topicDropdown = document.getElementById('topic');
+            var groupDropdown = document.getElementById('group');
+            var selectedGroup = @json($category->group);
+
+            function updateGroupDropdown() {
+                var selectedTopic = topicDropdown.options[topicDropdown.selectedIndex];
+                var groupsString = selectedTopic.getAttribute('data-groups');
+
+                groupDropdown.innerHTML = ''; // Clear existing options
+
+                if (groupsString) {
+                    var groupsArray = groupsString.split(',').map(function(group) {
+                        return group.trim();
+                    });
+
+                    groupsArray.forEach(function(group) {
+                        var option = document.createElement('option');
+                        option.value = group;
+                        option.text = group;
+                        groupDropdown.add(option);
+
+                        if (group === selectedGroup) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            }
+
+            updateGroupDropdown();
+
+            topicDropdown.addEventListener('change', updateGroupDropdown);
+        });
+    </script>
+@endpush

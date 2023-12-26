@@ -11,10 +11,12 @@ class DefineCategories extends Model
 
     protected $guarded = [];
 
-    public function user()
+    public function topics()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Topics::class);
     }
+
+
 
     // public function definecategories(){
     //     return $this->hasMany(DefinCategories::class)->orderBy('created_at', 'DESC');

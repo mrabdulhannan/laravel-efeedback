@@ -4,26 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DefineCategories;
+use App\Models\Topics;
 
 class CategoriesController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
     }
-    public function create(){
-        return view('admin.definecategories');
+    
+    public function create()
+    {
+        $topics = Topics::all();
+
+        // Assuming you have a method to get groups for each topic
+        $topicGroups = Topics::pluck('groups', 'id');
+
+        return view('admin.definecategories', compact('topics', 'topicGroups'));
     }
 
     public function store(Request $request){
 
-        // var_dump($request);
-        // exit();
-        // $data = $request->validate([
-        //     'title' => 'required',
-        //     'description' => 'required',
-        //     'group' => 'required',
-        //  ]);
-
+        // dd($request->all());
         $user = auth()->user();
 
         // Create a new post for the authenticated user
@@ -31,7 +32,7 @@ class CategoriesController extends Controller
             'title'=>$request['title'],
             'description'=>$request['description'],
             'group'=>$request['group'],
-            'user_id'=> $user['id'],
+            'topic_id'=> $request['topic'],
         ]);
 
         return redirect('/definecategories');
@@ -45,12 +46,27 @@ class CategoriesController extends Controller
         return redirect()->route('mycategories')->with('success', 'Category deleted successfully');
     }
 
+
     public function editCategory($id)
     {
-    $category = DefineCategories::findOrFail($id);
-
-    return view('admin.editcategory', ['category' => $category]);
+        $category = DefineCategories::findOrFail($id);
+    
+        // Fetch the selected topic and its groups (or provide defaults if not found)
+        $selectedTopic = Topics::find($category->topic_id);
+    
+        // Fetch all topics
+        $topics = Topics::all();
+    
+        // Fetch groups for each topic
+        $topicGroups = Topics::pluck('groups', 'id');
+    
+        return view('admin.editcategory', compact('category', 'topics', 'selectedTopic', 'topicGroups'));
     }
+    
+    
+    
+    
+
 
 
     public function updateCategory(Request $request, $id)
@@ -61,6 +77,7 @@ class CategoriesController extends Controller
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'group' => $request->input('group'),
+            'topic_id'=>$request->input('topic'),
         ]);
 
         return redirect()->route('mycategories')->with('success', 'Category updated successfully');

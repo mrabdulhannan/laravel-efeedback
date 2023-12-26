@@ -10,6 +10,15 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <!-- Content wrapper start -->
         <div class="content-wrapper">
 
@@ -18,7 +27,7 @@
                 <div class="col-xxl-12">
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="card-title">Update Category</h2>
+                            <h2 class="card-title">Update Topic</h2>
                             <form action="{{ route('updatetopicpost', ['topicId' => $topic->id]) }}" method="post">
                                 @csrf
                                 @method('patch')

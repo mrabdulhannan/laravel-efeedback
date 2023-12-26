@@ -20,87 +20,108 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xxl-12">
+
                                     <div class="custom-tabs-container">
-                                        <ul class="nav nav-tabs" id="customTab" role="tablist">
-                                            @foreach (Auth::user()->definetopic as $key => $topic)
-                                                <li class="nav-item" role="presentation">
-                                                    <a class="nav-link {{ $key === 0 ? 'active' : '' }}"
-                                                        data-bs-toggle="tab" href="#tab-{{ $topic->id }}" role="tab"
-                                                        aria-controls="tab-{{ $topic->id }}"
-                                                        aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                        @if (Auth::user()->definetopic !== null && count(Auth::user()->definetopic) > 0)
+                                            <ul class="nav nav-tabs" id="customTabs" role="tablist">
+                                                @foreach (Auth::user()->definetopic as $key => $topic)
+                                                    <li class="nav-item" role="presentation">
+                                                        <a class="nav-link {{ $key === 0 ? 'active' : '' }}"
+                                                            data-bs-toggle="tab" href="#tab-{{ $topic->id }}"
+                                                            role="tab" aria-controls="tab-{{ $topic->id }}"
+                                                            aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
+                                                            @php
+                                                                // Count the categories for the current topic
+                                                                $categoryCount = Auth::user()
+                                                                    ->definecategories->where('topic_id', $topic->id)
+                                                                    ->count();
+                                                            @endphp
+                                                            @if ($categoryCount > 0)
+                                                                <span class="badge bg-info">{{ $categoryCount }}</span>
+                                                            @endif
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
 
-                                        {{-- <ul class="nav nav-tabs" id="customTab" role="tablist">
-                                            @foreach (Auth::user()->definetopic as $topic)
-                                            <li class="nav-item" role="presentation">
-                                                <a class="nav-link" id="tab-one" data-bs-toggle="tab"
-                                                    href="{{$topic->id}}" role="tab" aria-controls="one"
-                                                    aria-selected="true">{{$topic->title}}</a>
-                                            </li>
-                                            @endforeach
-                                        </ul> --}}
+                                            <div class="tab-content" id="customTabContent">
+                                                @foreach (Auth::user()->definetopic as $key => $topic)
+                                                    <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
+                                                        id="tab-{{ $topic->id }}" role="tabpanel"
+                                                        aria-labelledby="tab-{{ $topic->id }}">
+                                                        <!-- Your existing tab content... -->
+                                                        <form
+                                                            action="{{ route('updatetopicpost', ['topicId' => $topic->id]) }}"
+                                                            method="post">
+                                                            @csrf
+                                                            @method('patch')
 
-                                        <div class="tab-content" id="customTabContent">
-                                            @foreach (Auth::user()->definetopic as $key => $topic)
-                                                <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
-                                                    id="tab-{{ $topic->id }}" role="tabpanel"
-                                                    aria-labelledby="tab-{{ $topic->id }}">
-                                                    <!-- Your table content for each tab goes here -->
-                                                    <form action="{{ route('updatetopic', ['topicId' => $topic->id]) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        @method('patch')
+                                                            <table class="table">
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Total assessments
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="total_assessments"
+                                                                            value="{{ $topic->total_assessments }}" /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Today’s Date</th>
+                                                                    <td><input type="date" class="form-control"
+                                                                            name="start_date"
+                                                                            value="{{ optional($topic->start_date)->format('Y-m-d') }}">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Targeted date of
+                                                                        completion</th>
+                                                                    <td><input type="date" class="form-control"
+                                                                            name="end_date"
+                                                                            value="{{ optional($topic->end_date)->format('Y-m-d') }}">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Days remaining</th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="days_remaining" id="days_remaining" value="6" />
+                                                                    </td>
+                                                                </tr>
+                                                                {{-- <tr>
+                                                                    <th width="250" valign="middle">Days remaining</th>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" name="days_remaining" id="days_remaining" value="" />
+                                                                    </td>
+                                                                </tr> --}}
+                                                                
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Provided feedback
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="provided_feedback"
+                                                                            value="{{ $categoryCount }}" />
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
 
-                                                        <table class="table">
-                                                            <tr>
-                                                                <th width="250" valign="middle">Total assessments</th>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="total_assessments"
-                                                                        value="{{ $topic->total_assessments }}" /></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th width="250" valign="middle">Today’s Date</th>
-                                                                <td><input type="date" class="form-control"
-                                                                        name="start_date"
-                                                                        value="{{ optional($topic->start_date)->format('Y-m-d') }}">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th width="250" valign="middle">Targeted date of
-                                                                    completion</th>
-                                                                <td><input type="date" class="form-control"
-                                                                        name="end_date"
-                                                                        value="{{ optional($topic->end_date)->format('Y-m-d') }}">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th width="250" valign="middle">Days remaining</th>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="days_remaining" value="6" /></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th width="250" valign="middle">Provided feedback</th>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="provided_feedback"
-                                                                        value="{{ count(Auth::user()->definecategories) }}" />
-                                                                </td>
-                                                            </tr>
-                                                        </table>
+                                                            <button type="submit" class="btn btn-primary">Update</button>
+                                                        </form>
+                                                        <!-- Your existing form code... -->
 
-                                                        <button type="submit" class="btn btn-primary">Update</button>
-                                                    </form>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        {{-- <div class="tab-content" id="customTabContent">
-                                            <div class="tab-pane fade active show" id="{{$topic->id}}" role="tabpanel"
-                                            aria-labelledby="tab-one">
-                                            
+                                                        <p>
+                                                            {{-- @if ($categoryCount > 0)
+                                                                Number of categories for this topic: {{ $categoryCount }}
+                                                            @else
+                                                                No categories available for this topic.
+                                                            @endif --}}
+                                                        </p>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        </div> --}}
+                                        @else
+                                            <p>No topics available.</p>
+                                        @endif
                                     </div>
+
+                                    <!-- Your existing code... -->
                                 </div>
                             </div>
                         </div>
@@ -112,3 +133,39 @@
         <!-- Content wrapper end -->
     </div>
 @endsection
+<!-- Your existing script tag... -->
+@push('script-page-level')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var startDateInput = document.getElementsByName('start_date')[0];
+        var endDateInput = document.getElementsByName('end_date')[0];
+        var daysRemainingInput = document.getElementById('days_remaining');
+
+        // Add event listeners to recalculate the days remaining when the dates change
+        startDateInput.addEventListener('input', updateDaysRemaining);
+        endDateInput.addEventListener('input', updateDaysRemaining);
+
+        // Initial calculation on page load
+        updateDaysRemaining();
+
+        function updateDaysRemaining() {
+            var startDateValue = startDateInput.value;
+            var endDateValue = endDateInput.value;
+
+            if (startDateValue && endDateValue) {
+                var startDate = new Date(startDateValue);
+                var endDate = new Date(endDateValue);
+
+                // Calculate the difference in days between the two dates
+                var timeDifference = endDate.getTime() - startDate.getTime();
+                var daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+                // Display the calculated days remaining
+                daysRemainingInput.value = daysRemaining;
+            } else {
+                daysRemainingInput.value = ''; // Reset to empty if either date is not provided
+            }
+        }
+    });
+</script>
+@endpush

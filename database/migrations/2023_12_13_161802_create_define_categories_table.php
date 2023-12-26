@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('group');
+            $table->unsignedBigInteger('topic_id');
             $table->timestamps();
             $table->index('user_id');
         });

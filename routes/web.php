@@ -59,7 +59,6 @@ Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::cl
 // Topics Relevent Routes
 Route::get('/definetopic', [App\Http\Controllers\TopicsController::class, 'create'])->name('definetopic');
 Route::post('/storetopic', [App\Http\Controllers\TopicsController::class, 'store'])->name('storetopic');
-Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopic'])->name('updatetopic');
 Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopicpost'])->name('updatetopicpost');
 Route::post('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.post');
 Route::get('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.get');
