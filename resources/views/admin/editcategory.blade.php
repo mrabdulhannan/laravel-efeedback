@@ -18,15 +18,7 @@
                             <form action="{{ route('updateCategory', ['id' => $category->id]) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <!-- Add an empty group dropdown that will be populated dynamically -->
-                                <div class="mb-3">
-                                    <label for="group" class="form-label">Group</label>
-                                    <div class="input-group">
-                                        <select class="form-select" id="group" name="group" required>
-                                            <!-- The groups for the selected topic will be dynamically populated here -->
-                                        </select>
-                                    </div>
-                                </div> --}}
+                                
                                 <!-- Add a data- attribute to store the groups for each topic -->
                                 <select class="form-select" id="topic" name="topic" required>
                                     @foreach ($topics as $topic)
@@ -37,6 +29,8 @@
                                         </option>
                                     @endforeach
                                 </select>
+
+
 
                                 <!-- Add an empty group dropdown that will be populated dynamically -->
                                 <div class="mb-3">
