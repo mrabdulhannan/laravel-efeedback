@@ -36,54 +36,52 @@
                                         </li>
                                     @endforeach
                                 </ul>
-        
+                        
                                 <div class="tab-content" id="customTabContent">
-                                    
                                     @foreach (Auth::user()->definetopic as $key => $topic)
                                         <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
-                                            <ul class="list-group" id="itemsList">
-                                                <?php $filteredCategories = Auth::user()->definecategories->where('topic_id', $topic->id); ?>
-                                                @foreach ($filteredCategories as $category)
-                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                        <div>
-                                                            <h5 class="mb-1">{{ $category->title }}</h5>
-                                                            <p class="mb-1">{{ $category->description }}</p>
-                                                            <span class="badge bg-info">{{ $category->group }}</span>
-                                                        </div>
-                                                        <div class="d-flex">
+                                            @php
+                                                // Group categories by their 'group' attribute
+                                                $groupedCategories = Auth::user()->definecategories
+                                                    ->where('topic_id', $topic->id)
+                                                    ->groupBy('group');
+                                            @endphp
+                                            @forelse ($groupedCategories as $group => $categories)
+                                                <h5>{{ $group }}</h5>
+                                                <ul class="list-group" id="itemsList">
+                                                    @foreach ($categories as $category)
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
                                                             <div>
-                                                                <form action="{{ route('editCategory', ['id' => $category->id]) }}"
-                                                                    method="post">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn btn-warning  btn-sm">Edit</button>
-                                                                </form>
-                                                                {{-- <a href="" class="btn btn-warning btn-sm me-2">Edit</a> --}}
-                                                                <!-- Edit Button -->
+                                                                <h5 class="mb-1">{{ $category->title }}</h5>
+                                                                {{-- <p class="mb-1">{{ $category->description }}</p> --}}
+                                                                {{-- <span class="badge bg-info">{{ $category->group }}</span> --}}
                                                             </div>
-                                                            <div>
-                                                                <!-- Delete Form -->
-                                                                <form action="{{ route('deleteCategory', ['id' => $category->id]) }}"
-                                                                    method="post"
-                                                                    onsubmit="return confirm('Are you sure you want to delete this category?')">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                                </form>
-                                                                <!-- End Delete Form -->
+                                                            <div class="d-flex">
+                                                                <div>
+                                                                    <form action="{{ route('editCategory', ['id' => $category->id]) }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        <button type="submit" class="btn btn-warning  btn-sm me-1">Edit</button>
+                                                                    </form>
+                                                                </div>
+                                                                <div>
+                                                                    <form action="{{ route('deleteCategory', ['id' => $category->id]) }}"
+                                                                        method="post"
+                                                                        onsubmit="return confirm('Are you sure you want to delete this category?')">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                                    </form>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                            <p>
-                                                {{-- @if ($categoryCount > 0)
-                                                    Number of categories for this topic: {{ $categoryCount }}
-                                                @else
-                                                    No categories available for this topic.
-                                                @endif --}}
-                                            </p>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @empty
+                                                <p>No categories available for this topic.</p>
+                                            @endforelse
                                         </div>
                                     @endforeach
                                 </div>
@@ -91,6 +89,7 @@
                                 <p>No topics available.</p>
                             @endif
                         </div>
+                        
 
                     </div>
                 </div>
