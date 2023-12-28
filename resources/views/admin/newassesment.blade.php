@@ -2,7 +2,7 @@
 
 @push('stylesheet-page-level')
     <style>
-        li.list-group-item.selected {
+        .list-group-item.selected2 {
             background-color: #007bff;
             color: white;
         }
@@ -180,6 +180,7 @@
                 const categoryId = $(this).data('category-id');
 
                 // Toggle the 'selected' class for the clicked category
+                $(this).parent('li').toggleClass('selected2');
                 $(this).toggleClass('selected');
 
                 // Update the selected items list based on the 'selected' class
