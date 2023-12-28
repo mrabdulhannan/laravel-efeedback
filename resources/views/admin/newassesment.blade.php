@@ -26,7 +26,9 @@
                                         <a class="nav-link {{ $key === 0 ? 'active' : '' }}" data-bs-toggle="tab"
                                             href="#tab-{{ $topic->id }}" role="tab"
                                             aria-controls="tab-{{ $topic->id }}"
-                                            aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
+                                            aria-selected="{{ $key === 0 ? 'true' : 'false' }}"
+                                            onclick="resetSelectedItems()">
+                                            {{ $topic->title }}
                                             @php
                                                 // Count the categories for the current topic
                                                 $categoryCount = Auth::user()
@@ -47,7 +49,7 @@
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
 
-                                            <ul id="itemList" class="list-group">
+                                            <ul id="itemList_{{ $topic->id }}" class="list-group">
                                                 <!-- Item IDs will be dynamically added here -->
                                                 @php
                                                     // Group categories by their 'group' attribute
@@ -58,9 +60,8 @@
                                                 @forelse ($groupedCategories as $group => $categories)
                                                     <h5>{{ $group }}</h5>
                                                     @foreach ($categories as $category)
-                                                        <li class="list-group-item">
-                                                            <span class="category-title"
-                                                                data-category-id="{{ $category->id }}">{{ $category->title }}</span>
+                                                        <li class="list-group-item" data-category-id="{{ $category->id }}">
+                                                            <span class="category-title">{{ $category->title }}</span>
                                                         </li>
                                                     @endforeach
                                                 @empty
@@ -68,16 +69,16 @@
                                                 @endforelse
                                             </ul>
 
-
                                             <p>
-                                                @if ($categoryCount > 0)
+                                                {{-- @if ($categoryCount > 0)
                                                     Number of categories for this topic: {{ $categoryCount }}
                                                 @else
                                                     No categories available for this topic.
-                                                @endif
+                                                @endif --}}
                                             </p>
                                         </div>
                                     @endforeach
+                                    <button id="addNewContentButton" class="btn btn-primary mt-2">Add New Content</button>
                                 </div>
                             </div>
                             <div class="col-9 mt-2">
@@ -102,10 +103,9 @@
     <script src="{{ asset('assets/tinymce/tinymce.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            const itemList = $('#itemList');
-            const categoryTitles = $('.category-title');
             const selectedItemData = $('#selectedItemData');
             const selectedItems = new Set();
+            const newlyAddedItems = new Set(); // Track newly added items
             const itemElements = {}; // to keep track of list items
 
             const items = <?= Auth::user()->definecategories ?>;
@@ -158,13 +158,34 @@
                     }
                 });
 
+                // Concatenate HTML content for newly added items
+                newlyAddedItems.forEach(itemId => {
+                    const elementId = `description_${itemId}`;
+                    selectedItemData.append(`
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control mb-2" id="title_${itemId}" name="title" value="">
+                                    <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6"></textarea>
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+
+                    // Initialize TinyMCE for the current element
+                    initializeTinyMCE(elementId);
+                });
+
                 // Highlight the selected items in the sidebar
                 highlightSelectedItems();
             }
 
             function highlightSelectedItems() {
                 // Remove 'selected' class from all items
-                itemList.find('li').removeClass('selected');
+                $('[id^=itemList_]').find('li').removeClass('selected');
 
                 // Add 'selected' class to the selected items
                 selectedItems.forEach(itemId => {
@@ -175,31 +196,35 @@
                 });
             }
 
-            // Attach click event to category titles
-            categoryTitles.click(function() {
-                const categoryId = $(this).data('category-id');
+            // Attach click event to entire list items
+            function setupClickEvent(topicId) {
+                const itemList = $(`#itemList_${topicId}`);
 
-                // Toggle the 'selected' class for the clicked category
-                $(this).parent('li').toggleClass('selected2');
-                $(this).toggleClass('selected');
+                itemList.on('click', 'li', function() {
+                    const categoryId = $(this).data('category-id');
 
-                // Update the selected items list based on the 'selected' class
-                if ($(this).hasClass('selected')) {
-                    selectedItems.add(categoryId);
-                } else {
-                    selectedItems.delete(categoryId);
-                }
+                    // Toggle the 'selected' class for the clicked category
+                    $(this).toggleClass('selected2');
+                    $(this).find('.category-title').toggleClass('selected');
 
-                // Render selected items' data in the main content area
-                renderSelectedItemsData();
-            });
+                    // Update the selected items list based on the 'selected' class
+                    if ($(this).find('.category-title').hasClass('selected')) {
+                        selectedItems.add(categoryId);
+                        newlyAddedItems.delete(categoryId); // Remove from newly added items
+                    } else {
+                        selectedItems.delete(categoryId);
+                    }
 
+                    // Render selected items' data in the main content area
+                    renderSelectedItemsData();
+                });
+            }
 
+            // Iterate over each topic and set up click event
+            @foreach (Auth::user()->definetopic as $topic)
+                setupClickEvent({{ $topic->id }});
+            @endforeach
 
-
-
-
-            categoryTitles.css('cursor', 'pointer');
             // Button click event handler
             $('#sendDataButton').click(function() {
                 // Get data of selected items
@@ -213,7 +238,7 @@
             function getSelectedData() {
                 const selectedData = [];
 
-                // Collect data for selected items
+                // Collect data for selected items and newly created content areas
                 selectedItems.forEach(itemId => {
                     const selectedItem = items.find(item => item.id === itemId);
                     if (selectedItem) {
@@ -234,9 +259,73 @@
                     }
                 });
 
+                // Collect data for newly created content areas
+                newlyAddedItems.forEach(itemId => {
+                    const newTitle = $(`#title_${itemId}`).val();
+                    const newDescription = tinymce.get(`description_${itemId}`).getContent();
+
+                    // Add data for the newly created content area to selectedData array
+                    selectedData.push({
+                        id: itemId,
+                        title: newTitle,
+                        description: newDescription,
+                        type: 'new', // Add the appropriate type for the new item
+                    });
+                });
+
                 return selectedData;
             }
 
+            // Button click event handler to add new content area
+            $('#addNewContentButton').click(function() {
+                // Create a unique ID for the new content area
+                const newItemId = 'newItem_' + Date.now();
+                const currentTab = $('#customTabs .nav-link.active');
+
+                // Append HTML content for the new content area
+                $(`#itemList_${currentTab.attr('data-topic-id')}`).append(`
+            <li class="list-group-item" id="${newItemId}" data-category-id="${newItemId}">
+                <span class="category-title">New Item</span>
+            </li>
+        `);
+
+                // Add the new item ID to the selected items set
+                newlyAddedItems.add(newItemId);
+
+                // Append specific HTML data for the new content area
+                selectedItemData.append(`
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <input type="text" class="form-control mb-2" id="title_${newItemId}" name="title" value="">
+                            <textarea class="form-control tinymce" id="description_${newItemId}" name="description" rows="6"></textarea>
+                            <hr />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+                // Initialize TinyMCE for the current element
+                initializeTinyMCE(`description_${newItemId}`);
+            });
+
+            // Function to reset selected items when switching tabs
+            // window.resetSelectedItems = function() {
+            //     selectedItems.clear();
+            //     newlyAddedItems.clear();
+            //     renderSelectedItemsData();
+            // };
+            window.resetSelectedItems = function() {
+                selectedItems.clear();
+                newlyAddedItems.clear();
+                renderSelectedItemsData();
+
+                // Remove 'selected' class from all list items
+                $('[id^=itemList_]').find('li').removeClass('selected2');
+                $('[id^=itemList_]').find('.category-title').removeClass('selected');
+            };
         });
     </script>
 @endpush
