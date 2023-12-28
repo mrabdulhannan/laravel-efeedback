@@ -78,7 +78,7 @@
                                             </p>
                                         </div>
                                     @endforeach
-                                    <button id="addNewContentButton" class="btn btn-primary mt-2">Add New Content</button>
+                                    <button id="addNewContentButton" class="btn btn-primary btn-sm mt-2">+</button>
                                 </div>
                             </div>
                             <div class="col-9 mt-2">

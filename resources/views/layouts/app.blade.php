@@ -53,7 +53,7 @@
     <div id="app">
         <div class="page-wrapper">
             @include('layouts.sidebar')
-            <div class="main-container">
+            <div class="main-container px-0">
                 @include('layouts.header')
                 @yield('content')
             </div>

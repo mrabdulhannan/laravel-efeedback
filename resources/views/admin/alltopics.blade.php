@@ -28,7 +28,7 @@
                                         <div>
                                             <form action="{{ route('edittopic.post', ['id' => $topic->id]) }}" method="post">
                                                 @csrf
-                                                <button type="submit" class="btn btn-warning  btn-sm">Edit</button>
+                                                <button type="submit" class="btn btn-warning  btn-sm me-1">Edit</button>
                                             </form>
                                             {{-- <a href="" class="btn btn-warning btn-sm me-2">Edit</a> --}}
                                             <!-- Edit Button -->
