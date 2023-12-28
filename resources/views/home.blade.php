@@ -46,6 +46,12 @@
 
                                             <div class="tab-content" id="customTabContent">
                                                 @foreach (Auth::user()->definetopic as $key => $topic)
+                                                    @php
+                                                        // Count the categories for the current topic
+                                                        $categoryCount = Auth::user()
+                                                            ->definecategories->where('topic_id', $topic->id)
+                                                            ->count();
+                                                    @endphp
                                                     <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                                         id="tab-{{ $topic->id }}" role="tabpanel"
                                                         aria-labelledby="tab-{{ $topic->id }}">
@@ -82,7 +88,8 @@
                                                                 <tr>
                                                                     <th width="250" valign="middle">Days remaining</th>
                                                                     <td><input type="text" class="form-control"
-                                                                            name="days_remaining" id="days_remaining" value="6" />
+                                                                            name="days_remaining" id="days_remaining"
+                                                                            value="6" />
                                                                     </td>
                                                                 </tr>
                                                                 {{-- <tr>
@@ -91,7 +98,7 @@
                                                                         <input type="text" class="form-control" name="days_remaining" id="days_remaining" value="" />
                                                                     </td>
                                                                 </tr> --}}
-                                                                
+
                                                                 <tr>
                                                                     <th width="250" valign="middle">Provided feedback
                                                                     </th>
@@ -135,37 +142,37 @@
 @endsection
 <!-- Your existing script tag... -->
 @push('script-page-level')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var startDateInput = document.getElementsByName('start_date')[0];
-        var endDateInput = document.getElementsByName('end_date')[0];
-        var daysRemainingInput = document.getElementById('days_remaining');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var startDateInput = document.getElementsByName('start_date')[0];
+            var endDateInput = document.getElementsByName('end_date')[0];
+            var daysRemainingInput = document.getElementById('days_remaining');
 
-        // Add event listeners to recalculate the days remaining when the dates change
-        startDateInput.addEventListener('input', updateDaysRemaining);
-        endDateInput.addEventListener('input', updateDaysRemaining);
+            // Add event listeners to recalculate the days remaining when the dates change
+            startDateInput.addEventListener('input', updateDaysRemaining);
+            endDateInput.addEventListener('input', updateDaysRemaining);
 
-        // Initial calculation on page load
-        updateDaysRemaining();
+            // Initial calculation on page load
+            updateDaysRemaining();
 
-        function updateDaysRemaining() {
-            var startDateValue = startDateInput.value;
-            var endDateValue = endDateInput.value;
+            function updateDaysRemaining() {
+                var startDateValue = startDateInput.value;
+                var endDateValue = endDateInput.value;
 
-            if (startDateValue && endDateValue) {
-                var startDate = new Date(startDateValue);
-                var endDate = new Date(endDateValue);
+                if (startDateValue && endDateValue) {
+                    var startDate = new Date(startDateValue);
+                    var endDate = new Date(endDateValue);
 
-                // Calculate the difference in days between the two dates
-                var timeDifference = endDate.getTime() - startDate.getTime();
-                var daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+                    // Calculate the difference in days between the two dates
+                    var timeDifference = endDate.getTime() - startDate.getTime();
+                    var daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
-                // Display the calculated days remaining
-                daysRemainingInput.value = daysRemaining;
-            } else {
-                daysRemainingInput.value = ''; // Reset to empty if either date is not provided
+                    // Display the calculated days remaining
+                    daysRemainingInput.value = daysRemaining;
+                } else {
+                    daysRemainingInput.value = ''; // Reset to empty if either date is not provided
+                }
             }
-        }
-    });
-</script>
+        });
+    </script>
 @endpush
