@@ -32,7 +32,8 @@
                                 </div> --}}
                                 <!-- Add a data- attribute to store the groups for each topic -->
                                 <select class="form-select" id="topic" name="topic" required>
-                                    @foreach ($topics as $topic)
+                                    
+                                    @foreach (Auth::user()->definetopic as $topic)
                                         <option value="{{ $topic->id }}"
                                             data-groups="{{ implode(',', explode(',', $topicGroups[$topic->id])) }}">
                                             {{ $topic->title }}</option>
