@@ -135,9 +135,9 @@
                             </div>
                         </li>
 
-                        <li class="breadcrumb-item has-submenu btn btn-success">
+                        <li class="breadcrumb-item btn btn-success">
                             {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('definecategories') }}">Rubrics</a>
+                            <a href="{{ route('rubrics') }}">Rubrics</a>
                             
                         </li>
                     </ol>
