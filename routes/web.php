@@ -74,3 +74,4 @@ Route::delete('/deletetopic/{id}', [App\Http\Controllers\TopicsController::class
 Route::get('/rubrics', [App\Http\Controllers\RubricsController::class, 'create'])->name('rubrics');
 Route::post('/storerubrics', [App\Http\Controllers\RubricsController::class, 'store'])->name('storerubrics');
 Route::put('/updaterubrics/{id}', [App\Http\Controllers\RubricsController::class, 'updaterubrics'])->name('updaterubrics');
+Route::delete('/deleteRubric/{id}', [App\Http\Controllers\RubricsController::class, 'deleteRubric'])->name('deleteRubric');

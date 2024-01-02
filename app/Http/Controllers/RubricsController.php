@@ -38,7 +38,9 @@ class RubricsController extends Controller
             'topic_id'=> $request['topic_id'],
         ]);
 
-        return redirect('/rubrics');
+        $topicId = $request->input('topic_id');
+        // return redirect('/rubrics');
+        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Rubic Added successfully');
     }
 
     public function updaterubrics(Request $request, $id)
@@ -57,6 +59,19 @@ class RubricsController extends Controller
             'topic_id'=>$request->input('topic_id')
         ]);
 
-        return redirect()->route('rubrics')->with('success', 'Rubic updated successfully');
+        $topicId = $request->input('topic_id');
+
+        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Rubic updated successfully');
+    }
+
+    public function deleteRubric($id)
+    {
+        // Find the category by ID and delete it
+        $category = Rubrics::findOrFail($id);
+        $category->delete();
+
+        // return redirect()->route('rubrics')->with('success', 'Rubric deleted successfully');
+
+        return response()->json(['success' => true]);
     }
 }

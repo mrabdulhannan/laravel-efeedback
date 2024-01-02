@@ -1,8 +1,49 @@
 @extends('layouts.app')
 
 @push('stylesheet-page-level')
+    <style>
+        table {
+            width: 100%;
+            /* Use a percentage or a fixed value based on your design */
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            word-wrap: break-word;
+            /* Enable text wrapping */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            resize: none;
+            overflow-y: auto;
+            /* Set to 'scroll' if you want a scrollbar always visible */
+            min-height: 100px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .new-rubic {
+            float: right;
+        }
+    </style>
 @endpush
 @section('content')
+
     <!-- Row start -->
     <div class="row">
         <div class="col-xxl-12">
@@ -12,9 +53,6 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <div class="card-header">
-                    <h2 class="card-title">All Topics</h2>
-                </div>
 
                 <div class="card-body">
                     <div class="custom-tabs-container">
@@ -27,7 +65,6 @@
                                             aria-controls="tab-{{ $topic->id }}"
                                             aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
                                             @php
-                                                // Count the categories for the current topic
                                                 $categoryCount = Auth::user()
                                                     ->definecategories->where('topic_id', $topic->id)
                                                     ->count();
@@ -43,7 +80,6 @@
                             <div class="tab-content" id="customTabContent">
                                 @foreach (Auth::user()->definetopic as $key => $topic)
                                     @php
-                                        // Count the categories for the current topic
                                         $categoryCount = Auth::user()
                                             ->definecategories->where('topic_id', $topic->id)
                                             ->count();
@@ -53,45 +89,8 @@
                                     <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                         id="tab-{{ $topic->id }}" role="tabpanel"
                                         aria-labelledby="tab-{{ $topic->id }}">
-                                        <!-- Your existing tab content... -->
                                         <h2>Rubrics Form</h2>
                                         <div class="">
-                                            <style>
-                                                table {
-                                                    width: 100%;
-                                                    /* Use a percentage or a fixed value based on your design */
-                                                    table-layout: fixed;
-                                                    border-collapse: collapse;
-                                                }
-
-                                                th,
-                                                td {
-                                                    border: 1px solid #dddddd;
-                                                    text-align: left;
-                                                    padding: 8px;
-                                                    word-wrap: break-word;
-                                                    /* Enable text wrapping */
-                                                }
-
-                                                th {
-                                                    background-color: #f2f2f2;
-                                                }
-
-                                                form {
-                                                    margin-top: 20px;
-                                                }
-
-                                                textarea {
-                                                    width: 100%;
-                                                    box-sizing: border-box;
-                                                    resize: none;
-                                                    overflow-y: auto;
-                                                    /* Set to 'scroll' if you want a scrollbar always visible */
-                                                    min-height: 100px;
-                                                    word-wrap: break-word;
-                                                    white-space: pre-wrap;
-                                                }
-                                            </style>
                                             <h2>Tutorial Presentation Evaluation</h2>
                                             <table>
                                                 <tr>
@@ -113,7 +112,8 @@
                                                     <th></th>
                                                 </tr>
                                                 @foreach ($rubrics as $key => $rubric)
-                                                    <form action="{{ route('updaterubrics', ['id' => $rubric->id]) }}" method="post">
+                                                    <form action="{{ route('updaterubrics', ['id' => $rubric->id]) }}"
+                                                        method="post">
                                                         @csrf <!-- Laravel CSRF token -->
                                                         @method('PUT')
                                                         <input type="text" name="topic_id" hidden
@@ -143,53 +143,51 @@
                                                             </td>
 
                                                             <td>
-                                                                <button type="submit">Update Rubrics</button>
+                                                                <button type="submit" class="btn btn-primary">Update
+                                                                    Rubrics</button>
                                                             </td>
                                                         </tr>
-
-
-
-
                                                     </form>
                                                 @endforeach
                                             </table>
-                                            <form action="{{ route('storerubrics') }}" method="post">
-                                                @csrf <!-- Laravel CSRF token -->
+                                            <div class="card-header new-rubic mb-3">
+                                                <button id="showFormBtn" class="btn btn-secondary" onclick="showForm('{{ $topic->id }}')">Add New Rubric</button>
+                                            </div>
+                                            <form id="rubricForm_{{ $topic->id }}" action="{{ route('storerubrics') }}" method="post"
+                                                style="display: none;">
+                                                @csrf
                                                 <input type="text" name="topic_id" hidden value="{{ $topic->id }}">
                                                 <table>
-
                                                     <tr>
                                                         <td>
-                                                            <input type="textarea" name="title" placeholder="Title">
+                                                            <textarea name="title" placeholder="Title"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="first" placeholder="1st:">
+                                                            <textarea name="first" placeholder="1st:"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="second" placeholder="2.1:">
+                                                            <textarea name="second" placeholder="2.1:"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="secondtwo" placeholder="2.2:">
+                                                            <textarea name="secondtwo" placeholder="2.2:"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="third" placeholder="3rd:">
+                                                            <textarea name="third" placeholder="3rd:"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="pass" placeholder="Pass:">
+                                                            <textarea name="pass" placeholder="Pass:"></textarea>
                                                         </td>
                                                         <td>
-                                                            <input type="textarea" name="fail" placeholder="Fail:">
+                                                            <textarea name="fail" placeholder="Fail:"></textarea>
                                                         </td>
 
                                                         <td>
-                                                            <button type="submit">Save Rubric</button>
+                                                            <button type="submit">Save Rubrics</button>
                                                         </td>
                                                     </tr>
                                                 </table>
-
-
-
                                             </form>
+
 
                                             <table>
                                                 <tr>
@@ -203,15 +201,6 @@
 
                                             <p>Tutor Signature: Dr Atif Sarwar Date: </p>
                                         </div>
-                                        <!-- Your existing form code... -->
-
-                                        <p>
-                                            {{-- @if ($categoryCount > 0)
-                                            Number of categories for this topic: {{ $categoryCount }}
-                                        @else
-                                            No categories available for this topic.
-                                        @endif --}}
-                                        </p>
                                     </div>
                                 @endforeach
                             </div>
@@ -227,4 +216,27 @@
 @endsection
 
 @push('script-page-level')
+    <script>
+        function showForm(topicId) {
+            console.log('Button clicked');
+            var form = document.getElementById('rubricForm_' + topicId);
+            form.style.display = 'block';
+            console.log('Form displayed');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the active tab from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('active_tab');
+            console.log(urlParams.get('active_tab'));
+
+            // Activate the tab if the activeTab is not null
+            if (activeTab) {
+                const tabLink = document.querySelector(`[href="#tab-${activeTab}"]`);
+                if (tabLink) {
+                    tabLink.click();
+                }
+            }
+        });
+    </script>
 @endpush
