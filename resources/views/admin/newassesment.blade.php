@@ -15,7 +15,7 @@
         <div class="col-xxl-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">New Assessment</h3>
+                    <h3 class="card-title">Write New Feedback</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">

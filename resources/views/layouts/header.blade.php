@@ -115,11 +115,11 @@
                         
                         <li class="breadcrumb-item has-submenu btn btn-success">
                             {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('definetopic') }}">Topics</a>
+                            <a href="{{ route('definetopic') }}">My Assessments</a>
                             <div class="submenu">
                                 <!-- Include submenu items from the sidebar -->
-                                <div class="submenu-item"><a href="{{ route('definetopic') }}">Define Topic</a></div>
-                                <div class="submenu-item"><a href="{{ route('alltopics') }}">All Topics</a></div>
+                                <div class="submenu-item"><a href="{{ route('definetopic') }}">Create New Assessment</a></div>
+                                <div class="submenu-item"><a href="{{ route('alltopics') }}">Show All</a></div>
                             </div>
                         </li>
 
@@ -131,7 +131,7 @@
                                 <div class="submenu-item"><a href="{{ route('definecategories') }}">Define
                                         Categories</a></div>
                                 <div class="submenu-item"><a href="{{ route('mycategories') }}">My Categories</a></div>
-                                <div class="submenu-item"><a href="{{ route('newassesment') }}">New Assessment</a></div>
+                                <div class="submenu-item"><a href="{{ route('newassesment') }}">Write New Feedback</a></div>
                             </div>
                         </li>
 

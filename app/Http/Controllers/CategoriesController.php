@@ -22,21 +22,48 @@ class CategoriesController extends Controller
         return view('admin.definecategories', compact('topics', 'topicGroups'));
     }
 
+    // public function store(Request $request){
+
+    //     dd($request->all());
+    //     $user = auth()->user();
+
+    //     // Create a new post for the authenticated user
+    //     $user->definecategories()->create([
+    //         'title'=>$request['title'],
+    //         'description'=>$request['description'],
+    //         'group'=>$request['group'],
+    //         'topic_id'=> $request['topic'],
+    //     ]);
+
+    //     // return redirect('/definecategories');
+    //     return redirect()->route('definetopic')->with('success', 'Category added successfully');
+    // }
+
     public function store(Request $request){
-
         // dd($request->all());
-        $user = auth()->user();
-
-        // Create a new post for the authenticated user
-        $user->definecategories()->create([
-            'title'=>$request['title'],
-            'description'=>$request['description'],
-            'group'=>$request['group'],
-            'topic_id'=> $request['topic'],
-        ]);
-
-        return redirect('/definecategories');
+        // Access the main category data
+        $mainCategoryData = [
+            'title' => $request['title'],
+            'description' => $request['description'],
+            'group' => $request['group'],
+            'topic_id' => $request['topic'],
+        ];
+    
+        // Create the main category
+        $mainCategory = auth()->user()->definecategories()->create($mainCategoryData);
+    
+        // Access the appended data JSON string and decode it into an array
+        $appendedData = json_decode($request['appendedData'], true);
+    
+        // Iterate through the appended data and create categories
+        foreach ($appendedData as $appendedCategoryData) {
+            $appendedCategoryData['topic_id'] = $request['topic']; // Assign the topic_id
+            auth()->user()->definecategories()->create($appendedCategoryData);
+        }
+    
+        return redirect()->route('definetopic')->with('success', 'Categories added successfully');
     }
+    
     public function deleteCategory($id)
     {
         // Find the category by ID and delete it
