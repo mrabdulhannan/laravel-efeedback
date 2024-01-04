@@ -36,12 +36,20 @@
                                         </li>
                                     @endforeach
                                 </ul>
-                        
+                                
                                 <div class="tab-content" id="customTabContent">
                                     @foreach (Auth::user()->definetopic as $key => $topic)
                                         <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
+                                            <form action="{{ route('definecategories', ['id' => $topic->id]) }}"
+                                                method="get" class="float-right">
+                                                @csrf
+                                                <div class="float-right">
+                                                    <button type="submit" class="btn btn-warning  btn-sm me-1 float-right">Edit</button>
+                                                </div>
+                                            </form>
+
                                             @php
                                                 // Group categories by their 'group' attribute
                                                 $groupedCategories = Auth::user()->definecategories

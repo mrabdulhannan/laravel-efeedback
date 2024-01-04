@@ -24,9 +24,9 @@
                     </a>
                     <div class="sidebar-submenu">
                         <ul>
-                            <li>
+                            {{-- <li>
                                 <a href="{{route('definecategories')}}">Define Categories</a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="{{route('mycategories')}}">My Categories</a>
                             </li>

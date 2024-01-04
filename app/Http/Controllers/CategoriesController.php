@@ -12,14 +12,17 @@ class CategoriesController extends Controller
         $this->middleware('auth');
     }
     
-    public function create()
+    public function create($id)
     {
-        $topics = Topics::all();
+        $topic = Topics::find($id);
+        // $topics = Topics::all();
 
         // Assuming you have a method to get groups for each topic
-        $topicGroups = Topics::pluck('groups', 'id');
+        // $topicGroups = Topics::pluck('groups', 'id');
 
-        return view('admin.definecategories', compact('topics', 'topicGroups'));
+
+
+        return view('admin.definecategories', ['topic' => $topic]);
     }
 
     // public function store(Request $request){
@@ -40,24 +43,37 @@ class CategoriesController extends Controller
     // }
 
     public function store(Request $request){
-        // dd($request->all());
-        // Access the main category data
-        $mainCategoryData = [
-            'title' => $request['title'],
-            'description' => $request['description'],
-            'group' => $request['group'],
-            'topic_id' => $request['topic'],
-        ];
+        dd($request->all());
+        $topicTitle = $request['topic_title'];
+        $topic = auth()->user()->definetopic()->where('title', $topicTitle)->firstOrNew();
+        // dd($topicTitle);
+        if (!$topic->exists) {
+            // If the topic does not exist, set the title and save it to the database
+            $topic->title = $topicTitle;
+            $topic->save();
+            
+        }
+
+        // Retrieve the topic id
+        $topicId = $topic->id;
+        
+        // // Access the main category data
+        // $mainCategoryData = [
+        //     'title' => $request['title'],
+        //     'description' => $request['description'],
+        //     'group' => $request['group'],
+        //     'topic_id' => $request['topic'],
+        // ];
     
-        // Create the main category
-        $mainCategory = auth()->user()->definecategories()->create($mainCategoryData);
+        // // Create the main category
+        // $mainCategory = auth()->user()->definecategories()->create($mainCategoryData);
     
         // Access the appended data JSON string and decode it into an array
         $appendedData = json_decode($request['appendedData'], true);
     
         // Iterate through the appended data and create categories
         foreach ($appendedData as $appendedCategoryData) {
-            $appendedCategoryData['topic_id'] = $request['topic']; // Assign the topic_id
+            $appendedCategoryData['topic_id'] = $topicId; // Assign the topic_id
             auth()->user()->definecategories()->create($appendedCategoryData);
         }
     

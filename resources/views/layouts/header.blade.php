@@ -125,11 +125,13 @@
 
                         <li class="breadcrumb-item has-submenu btn btn-success">
                             {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('definecategories') }}">Feedback</a>
+                            <a href="{{ route('mycategories') }}">Feedback</a>
+                            {{-- <a>Feedback</a> --}}
                             <div class="submenu">
                                 <!-- Include submenu items from the sidebar -->
-                                <div class="submenu-item"><a href="{{ route('definecategories') }}">Define
-                                        Categories</a></div>
+                                <div class="submenu-item">
+                                    {{-- <a href="{{ route('definecategories') }}">DefineCategories</a> --}}
+                                    </div>
                                 <div class="submenu-item"><a href="{{ route('mycategories') }}">My Categories</a></div>
                                 <div class="submenu-item"><a href="{{ route('newassesment') }}">Write New Feedback</a></div>
                             </div>
