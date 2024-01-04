@@ -62,27 +62,25 @@
     <script>
         $(document).ready(function() {
 
-            var groupIdCounter = 1;
+            var groupIdCounter = 0;
 
             $("#appendgroupBtn").click(function(e) {
                 e.preventDefault();
-
                 var newGroupId = "group" + groupIdCounter;
-                groupIdCounter++;
+                
+               
 
                 var newGroupDiv = '<div class="card">';
                 newGroupDiv += '<div class="card-body">';
                 newGroupDiv += '<div class="appended-div">';
                 newGroupDiv += '<div class="row">';
                 newGroupDiv +=
-                    '<div class="col-md-6 mb-3"><label for="' + newGroupId +
-                    '" class="form-label">Group</label><div class="input-group"><input type="text" class="form-control" id="' +
-                    newGroupId + '" name="' + newGroupId + '" required></div></div>';
+                    `<div class="col-md-6 mb-3"><label for="appendedGroup" class="form-label">Group</label><div class="input-group"><input type="text" class="form-control" id="appendedGroup" name=appendedGroup[${groupIdCounter}][]" required></div></div>`;
                 newGroupDiv +=
-                    '<div class="col-md-6 mb-3"><label for="appendedTitle" class="form-label">Title</label><input type="text" class="form-control" id="appendedTitle" name="appendedTitle[]" required></div>';
+                    `<div class="col-md-6 mb-3"><label for="appendedTitle" class="form-label">Title</label><input type="text" class="form-control" id="appendedTitle" name="appendedGroup[${groupIdCounter}][title][]" required></div>`;
                 newGroupDiv += '</div>';
                 newGroupDiv +=
-                    '<div class="mb-3"><label for="appendedDescription" class="form-label">Description</label><textarea class="form-control" id="appendedDescription" name="appendedDescription[]" rows="4" required></textarea></div>';
+                    `<div class="mb-3"><label for="appendedDescription" class="form-label">Description</label><textarea class="form-control" id="appendedDescription" name="appendedGroup[${groupIdCounter}][description][]" rows="4" required></textarea></div>`;
                 newGroupDiv += '<div id="appendedCategories-' + newGroupId + '"></div>';
                 newGroupDiv +=
                     '<button type="button" class="btn btn-secondary" id="appendDataBtn-' + newGroupId +
@@ -95,51 +93,43 @@
 
                 // Scroll to the bottom after appending
                 $("#appendedGroups").scrollTop($("#appendedGroups")[0].scrollHeight);
+                groupIdCounter++;
             });
 
             $("#appendgroupBtn").click();
+
             $(document).on("click", "[id^='appendDataBtn-']", function(e) {
                 e.preventDefault();
-
+                var groupCounter = $(this).attr("id").replace("appendDataBtn-group", "");
+                console.log(groupCounter);
                 var groupId = $(this).attr("id").replace("appendDataBtn-", "");
 
                 // Obtain values from the new category fields within the group
                 var groupTitle = $(`#${groupId}`).val();
-                if (groupTitle === "") {
-                    alert("Please Enter the Group First");
-                } else {
-                    // Create a new div with the appended structure
-                    var newCategoryDiv = '<div class="appended-div">';
-                    newCategoryDiv += '<div class="row">';
-                    newCategoryDiv +=
-                        '<div class="col-md-6 mb-3"><input type="text" class="form-control" id="appendedGroup" name="appendedGroup[]" value="' +
-                        groupTitle + '" required hidden></div></div>';
-                    newCategoryDiv +=
-                        '<div class="mb-3"><label for="appendedTitle" class="form-label">Title</label><input type="text" class="form-control" name="appendedTitle[]" value="" required></div>';
-                    newCategoryDiv +=
-                        '<div class="mb-3"><label for="appendedDescription" class="form-label">Description</label><textarea class="form-control" name="appendedDescription[]" rows="4" required></textarea></div>';
-                    newCategoryDiv += '</div>';
-                    var appendedGroups = [];
-                    $("input[name='appendedGroup[]']").each(function() {
-                        if ($(this).val() !== "") {
-                            appendedGroups.push($(this).val());
-                        }
-                    });
-                    $("#appendedGroup").val(appendedGroups.join(', '));
-                    // Append the new div to the container within the corresponding group
-                    $("#appendedCategories-" + groupId).append(newCategoryDiv);
+                var newCategoryDiv = '<hr>';
+                newCategoryDiv += '<div class="appended-div">';
+                newCategoryDiv += '<div class="row">';
+                newCategoryDiv +=
+                    `<div class="mb-3"><label for="appendedTitle" class="form-label">Title</label><input type="text" class="form-control" name="appendedGroup[${groupCounter}][title][]" value="" required></div>`;
+                newCategoryDiv +=
+                    `<div class="mb-3"><label for="appendedDescription" class="form-label">Description</label><textarea class="form-control" name="appendedGroup[${groupCounter}][description][]" rows="4" required></textarea></div>`;
+                newCategoryDiv += '</div>';
+                
 
-                    // Scroll to the bottom after appending
-                    $("#appendedCategories-" + groupId).scrollTop($("#appendedCategories-" + groupId)[0]
-                        .scrollHeight);
+                // Append the new div to the container within the corresponding group
+                $("#appendedCategories-" + groupId).append(newCategoryDiv);
 
-                    // Add the group to the appendedGroup array
-                    $("input[name='appendedGroup[]']").each(function() {
-                        if ($(this).val() !== "") {
-                            $("#appendedGroup").append($(this).val());
-                        }
-                    });
-                }
+                // Scroll to the bottom after appending
+                // $("#appendedCategories-" + groupId).scrollTop($("#appendedCategories-" + groupId)[0]
+                //     .scrollHeight);
+
+                // Add the group to the appendedGroup array
+                // $("input[name='appendedGroup[]']").each(function() {
+                //     if ($(this).val() !== "") {
+                //         $("#appendedGroup").append($(this).val());
+                //     }
+                // });
+                // }
             });
 
 
@@ -147,32 +137,6 @@
 
             // Handle the click event of the "Save Category" button
             $("#saveCategoryBtn").click(function(e) {
-                e.preventDefault();
-
-                // Create an array to store data of all appended divs
-                var appendedData = [];
-
-                // Iterate through each appended div
-                $(".appended-div").each(function(index) {
-                    var appendedGroup = $(this).find("input[name='appendedGroup[]']").val();
-                    var appendedTitle = $(this).find("input[name='appendedTitle[]']").val();
-                    var appendedDescriptions = $(this).find(
-                        "textarea[name='appendedDescription[]']").val();
-
-                    // Push the data to the array
-                    appendedData.push({
-                        group: appendedGroup,
-                        title: appendedTitle,
-                        description: appendedDescriptions
-                    });
-                });
-
-                // Append the array as a hidden input to the form
-                $("<input>").attr({
-                    type: "hidden",
-                    name: "appendedData",
-                    value: JSON.stringify(appendedData)
-                }).appendTo("#categoryForm");
 
                 // Submit the form
                 $("#categoryForm").submit();

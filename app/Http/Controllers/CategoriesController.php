@@ -44,6 +44,7 @@ class CategoriesController extends Controller
 
     public function store(Request $request){
         dd($request->all());
+        // echo "<pre>"; print_r($request->all()); exit();
         $topicTitle = $request['topic_title'];
         $topic = auth()->user()->definetopic()->where('title', $topicTitle)->firstOrNew();
         // dd($topicTitle);
