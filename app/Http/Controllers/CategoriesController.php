@@ -85,9 +85,9 @@ class CategoriesController extends Controller
                 // Assuming $descriptions and $titles have the same length
                 $description = $descriptions[$index];
                 $mainCategoryData = [
-                        'title' => $title??"N/A",
-                        'description' => $description??"N/A",
-                        'group' => $groupTitle??"N/A",
+                        'title' => $title??"NA",
+                        'description' => $description??"NA",
+                        'group' => $groupTitle??"NA",
                         'topic_id' => $topicId,
                     ];
                     auth()->user()->definecategories()->create($mainCategoryData);
