@@ -85,15 +85,41 @@ class CategoriesController extends Controller
                 // Assuming $descriptions and $titles have the same length
                 $description = $descriptions[$index];
                 $mainCategoryData = [
-                        'title' => $title,
-                        'description' => $description,
-                        'group' => $groupTitle,
+                        'title' => $title??"N/A",
+                        'description' => $description??"N/A",
+                        'group' => $groupTitle??"N/A",
                         'topic_id' => $topicId,
                     ];
                     auth()->user()->definecategories()->create($mainCategoryData);
 
             }
         }
+        $user = auth()->user();
+
+    // Your PHP variables
+    $values = [
+        ["Content Coverage", "Excellent and thorough understanding of the reading material.  All content clearly and thoroughly explained and referenced.", "Very good understanding of the reading material.  Almost all of the content was clearly and thoroughly explained and referenced.", "Good understanding of material.  The content covered was explained clearly and referenced. ", "Some major points of the reading were not covered or covered in a limited manner.  Some explanations may be incorrect. Limited references.  ", "Limited understanding of material. Some or much of the coverage may be incorrect. Limited or poor references.", "Most to all of the content is not explained or the material is explained incorrectly. No references.", $topicId],
+        ["Critical Analysis ", "Critical analysis and evaluative approach.  The presentation moves beyond the reading and adds both theoretical and real world context.  ", "Critical analysis and evaluative approach evident. Theoretical or real world context added.  ", " Critical analysis and evaluative approach evident but possibly inconsistent. Context added may be questionable.  ", "Some critical analysis attempted.  Context added may be questionable.  ", "Limited critical analysis or mainly descriptive. Limited or not context added. ", "Material was covered in a purely descriptive manner.  No further attempts to analyse the material or add context. ", $topicId],
+        ["Structure", "Presentation is clearly structured and easy to follow.  Main points are evident and the presentation follows a logical progression.   ", "Presentation is mostly easy to follow.  Main points are evident and the presentation follows a logical progression.   ", "Presentation is mostly easy to follow.  Main points may not be clear.  Presentation follows a mostly logical progression.   ", "Presentation may be difficult to follow at times.  Main points are established but may not be clear.  Reasons for the structure may not be clear.  ", "Presentation is often difficult to follow.  Main points may be hazy.  Structure does not usually follow a logical pattern, jumps around. ", "Presentation lacks structure and is very difficult to follow.  Main points are not made.", $topicId],
+        ["Delivery and use of powerpoint", "Vocal delivery is clear and easy to understand.  Powerpoint slides are clear and easy to see/read.  ", "Vocal delivery is mostly clear and easy to understand.  Powerpoint slides are mostly clear and easy to see/read.  ", "Speaker is occasionally hard to hear or understand.  Powerpoint is occasionally difficult to read or follow.  ", "Speaker is often hard to hear or understand.  Powerpoint is often difficult to read or follow.  ", "Speaker is very hard to hear or understand.  Powerpoint is very difficult to read or follow at times.  ", "Speaker if often unintelligible.  Powerpoint slides are unhelpful for the presentation. ", $topicId],
+        ["Discussion Facilitation", "Clear and consistent effort is made to keep discussion going for the full session.  Student is well prepared to facilitate a relevant discussion of breadth and depth.  ", "Student makes a very good effort to keep discussion going.  Student has relevant questions for a solid discussion.  ", "Student makes a solid effort to keep discussion going.  Student has relevant questions prepared.  ", "Student makes effort to keep discussion going.  More, and more relevant, questions could be prepared for discussion.", "Student makes limited effort to keep discussion going.   Few or poor questions are prepared for discussion.", "Student is unprepared to facilitate discussion, makes little or no effort to keep discussion going.", $topicId]
+    ];
+
+    // Loop through the array and perform the desired actions
+    foreach ($values as $data) {
+        // Assuming $user is an instance of a class that has the method definerubrics()
+        $user->definerubrics()->create([
+            'title' => $data[0],
+            'first' => $data[1],
+            'second' => $data[2],
+            'secondtwo' => $data[3],
+            'third' => $data[4],
+            'pass' => $data[5],
+            'fail' => $data[6],
+            'topic_id' => $data[7],
+        ]);
+    }
+
         if($route == "definetopic"){
             return redirect()->route('definetopic')->with('success', 'Categories added successfully');
         }

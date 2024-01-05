@@ -11,14 +11,14 @@
             </div>
         @endif
         @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <!-- Content wrapper start -->
         <div class="content-wrapper">
 
@@ -30,6 +30,12 @@
                             <h2 class="card-title">Update Topic</h2>
                             <form action="{{ route('updatetopicpost', ['topicId' => $topic->id]) }}" method="post">
                                 @csrf
+                                @php
+                                    // Count the categories for the current topic
+                                    $categoryCount = Auth::user()
+                                        ->definecategories->where('topic_id', $topic->id)
+                                        ->count();
+                                @endphp
                                 @method('patch')
                                 <!-- Title Input -->
                                 <div class="mb-3">
@@ -69,7 +75,7 @@
                                     <tr>
                                         <th width="250" valign="middle">Provided feedback</th>
                                         <td><input type="text" class="form-control" name="provided_feedback"
-                                                value="{{ count(Auth::user()->definecategories) }}" /></td>
+                                                value="{{ $categoryCount }}" /></td>
                                     </tr>
                                 </table>
                                 <!-- Save Button -->

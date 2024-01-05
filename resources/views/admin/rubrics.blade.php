@@ -89,17 +89,8 @@
                                     <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                         id="tab-{{ $topic->id }}" role="tabpanel"
                                         aria-labelledby="tab-{{ $topic->id }}">
-                                        <h2>Rubrics Form</h2>
                                         <div class="">
                                             <h2>Tutorial Presentation Evaluation</h2>
-                                            <table>
-                                                <tr>
-                                                    <th>Name :</th>
-                                                    <th>Student ID:</th>
-                                                    <th>Mark:</th>
-                                                    <th></th>
-                                                </tr>
-                                            </table>
                                             <table>
                                                 <tr class="main-table">
                                                     <th>Title</th>
@@ -187,19 +178,6 @@
                                                     </tr>
                                                 </table>
                                             </form>
-
-
-                                            <table>
-                                                <tr>
-                                                    <th rowspan="6">Content Coverage</th>
-                                                    <td>Excellent and thorough understanding of the reading material. All
-                                                        content clearly and thoroughly explained and referenced.</td>
-                                                </tr>
-                                            </table>
-
-                                            <p>Tutor Comments:</p>
-
-                                            <p>Tutor Signature: Dr Atif Sarwar Date: </p>
                                         </div>
                                     </div>
                                 @endforeach

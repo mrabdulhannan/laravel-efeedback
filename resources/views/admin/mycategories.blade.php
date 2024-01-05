@@ -47,7 +47,7 @@
                                                     method="get" class="">
                                                     @csrf
                                                     <div>
-                                                        <button type="submit" class="btn btn-secondary  btn-sm">Add New Category</button>
+                                                        <button type="submit" class="btn btn-secondary  btn-sm">Add Category</button>
                                                     </div>
                                                 </form>
                                             </div>
