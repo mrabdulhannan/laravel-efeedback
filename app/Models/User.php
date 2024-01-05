@@ -51,6 +51,6 @@ class User extends Authenticatable
     }
 
     public function definerubrics(){
-        return $this->hasMany(Rubrics::class)->orderBy('created_at', 'DESC');
+        return $this->hasMany(Rubrics::class)->orderBy('created_at', 'ASC');
     }
 }

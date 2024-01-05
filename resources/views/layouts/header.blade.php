@@ -1,194 +1,139 @@
-            <!-- Page header starts -->
-            <div class="page-header">
+<style>
+    .webnav-bar{background:#038199!important;}
+    .webnav-bar .navbar-nav .nav-link{color:#fff;padding:0 10px;}
+    .webnav-bar .navbar-nav>a{color:#fff;}
+    .navbar-light .navbar-nav .nav-link.active,
+    .navbar-light .navbar-nav .show > .nav-link{color:#a3e0ee;}
+    .webnav-bar a svg{width:2em;height:2em;}
+</style>
 
-                <div class="toggle-sidebar" id="toggle-sidebar"><i class="bi bi-list"></i></div>
-                <style>
-                    .header-menu {
-                        padding: 10px;
-                    }
-
-                    .breadcrumb {
-                        list-style: none;
-                        padding: 0;
-                        margin: 0;
-                    }
-
-                    .breadcrumb-item {
-                        display: inline-block;
-                        margin-right: 10px;
-                        position: relative;
-                    }
-
-                    .breadcrumb-item a {
-                        text-decoration: none;
-                        color: black;
-                        display: block;
-                        position: relative;
-                    }
-
-                    .breadcrumb-item i {
-                        margin-right: 5px;
-                        display: inline-block;
-                    }
-
-                    .breadcrumb-item.breadcrumb-active {
-                        font-weight: bold;
-                        color: #007bff;
-                        /* Change the color to your preference */
-                    }
-
-                    .submenu {
-                        display: none;
-                        position: absolute;
-                        top: 100%;
-                        left: 0;
-                        background-color: white;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                        z-index: 1;
-                        list-style-type: none;
-                        padding: 0;
-                    }
-
-                    .breadcrumb-item:hover .submenu {
-                        display: block;
-                    }
-
-                    .breadcrumb-item.has-submenu::after {
-                        content: "▼";
-                        font-size: 0.8em;
-                        margin-left: 5px;
-                    }
-
-                    .submenu-item {
-                        padding: 10px;
-                        border-bottom: 1px solid #ddd;
-                    }
-
-                    .submenu-item a {
-                        text-decoration: none;
-                        color: black;
-                        display: block;
-                    }
-                </style>
-
-                <script>
-                    $(document).ready(function() {
-                        // Set active state based on the current URL
-                        var currentURL = window.location.href;
-
-                        // Function to set active state for menu items
-                        function setActiveState(url) {
-                            $(".breadcrumb-item").removeClass("breadcrumb-active");
-                            $(".submenu-item").removeClass("breadcrumb-active");
-
-                            $(".breadcrumb-item a[href='" + url + "']").parent().addClass("breadcrumb-active");
-                            $(".submenu-item a[href='" + url + "']").parent().addClass("breadcrumb-active");
-                        }
-
-                        // Set active state on page load
-                        setActiveState(currentURL);
-
-                        // Add click event handler for breadcrumb items
-                        $(".breadcrumb-item a").on("click", function() {
-                            var menuItemURL = $(this).attr("href");
-                            setActiveState(menuItemURL);
-                        });
-
-                        // Add click event handler for submenu items
-                        $(".submenu-item a").on("click", function() {
-                            var submenuItemURL = $(this).attr("href");
-                            var mainMenuItemURL = $(this).closest(".breadcrumb-item").find("a").attr("href");
-                            setActiveState(mainMenuItemURL);
-                        });
-                    });
-                </script>
-
-
-
-
-                <div class="header-menu ps-0">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item btn btn-success">
-                            {{-- <i class="bi bi-house"></i> --}}
-                            <a href="{{ route('home') }}">Dashboard</a>
-                        </li>
-                        
-                        <li class="breadcrumb-item has-submenu btn btn-success">
-                            {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('definetopic') }}">My Assessments</a>
-                            <div class="submenu">
-                                <!-- Include submenu items from the sidebar -->
-                                <div class="submenu-item"><a href="{{ route('definetopic') }}">Create New Assessment</a></div>
-                                <div class="submenu-item"><a href="{{ route('alltopics') }}">Show All</a></div>
-                            </div>
-                        </li>
-
-                        <li class="breadcrumb-item has-submenu btn btn-success">
-                            {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('mycategories') }}">Feedback</a>
-                            {{-- <a>Feedback</a> --}}
-                            <div class="submenu">
-                                <!-- Include submenu items from the sidebar -->
-                                <div class="submenu-item">
-                                    {{-- <a href="{{ route('definecategories') }}">DefineCategories</a> --}}
-                                    </div>
-                                <div class="submenu-item"><a href="{{ route('mycategories') }}">My Categories</a></div>
-                                <div class="submenu-item"><a href="{{ route('newassesment') }}">Write New Feedback</a></div>
-                            </div>
-                        </li>
-
-                        <li class="breadcrumb-item btn btn-success">
-                            {{-- <i class="bi bi-chat-right-text"></i> --}}
-                            <a href="{{ route('rubrics') }}">Rubrics</a>
-                            
-                        </li>
-                    </ol>
-                </div>
-
-                <div class="header-actions-container">
-                    <!-- Header actions start -->
-                    <ul class="header-actions">
-                        <li class="dropdown">
-                            <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown"
-                                aria-haspopup="true">
-                                <span class="user-name d-none d-md-block">@auth
-                                        {{ Auth::user()->name }}
-                                    @endauth
-                                </span>
-                                <span class="avatar">
-                                    <img src="{{ asset('assets/img') }}/user.png" alt="User Avatar">
-                                    <span class="status online"></span>
-                                </span>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
-                                <div class="header-profile-actions">
-                                    <a href="{{ route('updatepassword') }}">Update Password</a>
-                                    <a href="{{ route('logout') }}"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                        class="d-none">
-                                        @csrf
-                                    </form>
-
-                                </div>
-                            </div>
-
-                        </li>
-                        <li>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
-                                <div class="header-profile-actions">
-                                    <a href="login.html">Logout</a>
-                                </div>
-                            </div>
-                        </li>
+<nav class="navbar navbar-expand-lg navbar-light webnav-bar mb-3">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+                {{-- <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ route('home') }}" id="homeLink">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-house-fill" viewBox="0 0 16 16">
+                            <!-- SVG path for the house icon -->
+                        </svg>
+                    </a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{ route('home') }}" id="homeLink"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                    <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+                    </svg></a>
+                    </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{ route('definetopic') }}" id="feedbackLink"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Feedback
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="feedbackLink">
+                        <li><a class="dropdown-item" href="{{ route('definetopic') }}">Create New Assessment</a></li>
+                        <li><a class="dropdown-item" href="{{ route('alltopics') }}">Show All</a></li>
                     </ul>
-                    <!-- Header actions end -->
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{ route('mycategories') }}" id="assessmentsLink"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        My Assessments
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="assessmentsLink">
+                        <li><a class="dropdown-item" href="{{ route('mycategories') }}">My Categories</a></li>
+                        <li><a class="dropdown-item" href="{{ route('newassesment') }}">Write New Feedback</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('rubrics') }}" id="rubricsLink">Rubrics</a>
+                </li>
+            </ul>
+            <div class="header-actions-container">
+                <!-- Header actions start -->
+                <ul class="header-actions">
+                    <!-- Your existing header actions -->
+                </ul>
+                <!-- Header actions end -->
+            </div>
+            <div class="header-actions-container">
+                <!-- Header actions start -->
+                <ul class="header-actions">
+                    <li class="dropdown">
+                        <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown"
+                            aria-haspopup="true">
+                            <span class="user-name d-none d-md-block">@auth
+                                    {{ Auth::user()->name }}
+                                @endauth
+                            </span>
+                            <span class="avatar">
+                                <img src="{{ asset('assets/img') }}/user.png" alt="User Avatar">
+                                <span class="status online"></span>
+                            </span>
+                        </a>
 
-                </div>
-                <!-- Header actions ccontainer end -->
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
+                            <div class="header-profile-actions">
+                                <a href="{{ route('updatepassword') }}">Update Password</a>
+                                <a href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
+                                    @csrf
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
+                            <div class="header-profile-actions">
+                                <a href="login.html">Logout</a>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </ul>
+                <!-- Header actions end -->
 
             </div>
-            <!-- Page header ends -->
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the current URL path
+        var path = window.location.pathname;
+
+        // Define the route names associated with each navigation item
+        var routeNames = {
+            'home': 'homeLink',
+            'mycategories': 'assessmentsLink',
+            'definetopic': 'feedbackLink',
+            'alltopics': 'feedbackLink',
+            'newassesment': 'assessmentsLink',
+            'rubrics': 'rubricsLink'
+        };
+
+        // Find the corresponding route name and add the 'active' class
+        var activeLinkId = routeNames[path.replace('/', '')];
+        if (activeLinkId) {
+            // Remove 'active' class from all nav links
+            document.querySelectorAll('.nav-link').forEach(function (link) {
+                link.classList.remove('active');
+            });
+
+            // Add 'active' class to the current nav link
+            document.getElementById(activeLinkId).classList.add('active');
+        }
+    });
+</script>
+

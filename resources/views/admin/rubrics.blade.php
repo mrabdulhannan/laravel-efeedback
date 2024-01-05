@@ -90,7 +90,7 @@
                                         id="tab-{{ $topic->id }}" role="tabpanel"
                                         aria-labelledby="tab-{{ $topic->id }}">
                                         <div class="">
-                                            <h2>Tutorial Presentation Evaluation</h2>
+                                            
                                             <table>
                                                 <tr class="main-table">
                                                     <th>Title</th>
@@ -135,14 +135,15 @@
 
                                                             <td>
                                                                 <button type="submit" class="btn btn-primary">Update
-                                                                    Rubrics</button>
+                                                                </button>
+                                                                <a href="#" class="btn btn-danger delete-rubric" data-rubric-id="{{ $rubric->id }}">X</a>
                                                             </td>
                                                         </tr>
                                                     </form>
                                                 @endforeach
                                             </table>
                                             <div class="card-header new-rubic mb-3">
-                                                <button id="showFormBtn" class="btn btn-secondary" onclick="showForm('{{ $topic->id }}')">Add New Rubric</button>
+                                                <button id="showFormBtn" class="btn btn-secondary" onclick="showForm('{{ $topic->id }}')">Add New</button>
                                             </div>
                                             <form id="rubricForm_{{ $topic->id }}" action="{{ route('storerubrics') }}" method="post"
                                                 style="display: none;">
@@ -194,6 +195,29 @@
 @endsection
 
 @push('script-page-level')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-rubric').forEach(function (deleteLink) {
+            deleteLink.addEventListener('click', function (event) {
+                event.preventDefault();
+                
+                // You can show a confirmation dialog here if needed
+                var confirmDelete = confirm('Are you sure you want to delete this rubric?');
+
+                if (confirmDelete) {
+                    var rubricId = this.getAttribute('data-rubric-id');
+                    var deleteForm = document.createElement('form');
+                    deleteForm.method = 'POST';
+                    deleteForm.action = '{{ url('deleteRubric') }}/' + rubricId;
+                    deleteForm.innerHTML = '<input type="hidden" name="_method" value="DELETE">' +
+                        '{{ csrf_field() }}';
+                    document.body.appendChild(deleteForm);
+                    deleteForm.submit();
+                }
+            });
+        });
+    });
+</script>
     <script>
         function showForm(topicId) {
             console.log('Button clicked');

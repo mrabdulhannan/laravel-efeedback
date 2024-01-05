@@ -40,7 +40,7 @@ class RubricsController extends Controller
 
         $topicId = $request->input('topic_id');
         // return redirect('/rubrics');
-        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Rubic Added successfully');
+        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Record Added successfully');
     }
 
     public function updaterubrics(Request $request, $id)
@@ -61,7 +61,7 @@ class RubricsController extends Controller
 
         $topicId = $request->input('topic_id');
 
-        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Rubic updated successfully');
+        return redirect()->route('rubrics', ['active_tab' => $topicId])->with('success', 'Record updated successfully');
     }
 
     public function deleteRubric($id)
@@ -70,8 +70,8 @@ class RubricsController extends Controller
         $category = Rubrics::findOrFail($id);
         $category->delete();
 
-        // return redirect()->route('rubrics')->with('success', 'Rubric deleted successfully');
+        return redirect()->route('rubrics')->with('success', 'Record deleted successfully');
 
-        return response()->json(['success' => true]);
+        // return response()->json(['success' => true]);
     }
 }
