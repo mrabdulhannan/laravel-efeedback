@@ -18,7 +18,7 @@
             <!-- Row start -->
             <div class="row">
                 <div class="col-xxl-12">
-
+                    <h4 class="card-title mb-3">Create New Assessment</h4>
                     <div class="">
                         <div class="">
                             <div class="form-container">
@@ -27,16 +27,15 @@
                                     @csrf
 
                                     <div class="card">
-                                        <div class="card-body">
-                                            <h2 class="card-title">Create New Assessment</h2>
+                                        <div class="card-body">                                            
                                             <div class="mb-3">
-                                                <label for="topic_title" class="form-label">Assessment</label>
+                                                <label for="topic_title" class="form-label">Assessment <i>(like Leadership, Organizational Behavior, Marketing etc...)</i></label>
                                                 <input type="text" class="form-control" id="topic_title"
                                                     name="topic_title" required>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <h4 class="card-title mb-3">Define Feedback Categories</h4>
                                     <div id="appendedGroups"></div>
 
                                 </form>
@@ -44,9 +43,11 @@
                         </div>
 
                         <!-- Save Button -->
-                        <button type="button" class="btn btn-primary add-form-btn" id="saveCategoryBtn">Save
-                            Category</button>
-                        <button id="appendgroupBtn" class="btn btn-danger">Add New Group</button>
+                        <div class="d-flex justify-content-between">
+                        <button id="appendgroupBtn" class="btn btn-danger">New Category</button>
+                        <button type="button" class="btn btn-primary add-form-btn float-right" id="saveCategoryBtn">Save
+                            Assessment</button>                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,16 +76,16 @@
                 newGroupDiv += '<div class="appended-div">';
                 newGroupDiv += '<div class="row">';
                 newGroupDiv +=
-                    `<div class="col-md-6 mb-3"><label for="appendedGroup" class="form-label">Group</label><div class="input-group"><input type="text" class="form-control" id="appendedGroup" name=appendedGroup[${groupIdCounter}][]" required></div></div>`;
+                    `<div class="col-md-6 mb-3"><label for="appendedGroup" class="form-label">Feedback Category <i>(like Table of Content, Referencing & Citation etc...)</i></label><div class="input-group"><input type="text" class="form-control" id="appendedGroup" name=appendedGroup[${groupIdCounter}][]" required></div></div>`;
                 newGroupDiv +=
-                    `<div class="col-md-6 mb-3"><label for="appendedTitle" class="form-label">Title</label><input type="text" class="form-control" id="appendedTitle" name="appendedGroup[${groupIdCounter}][title][]" required></div>`;
+                    `<div class="col-md-6 mb-3"><label for="appendedTitle" class="form-label">Sub Category <i>(like No TOC Provided, TOC not as per standards etc...)</i></label><input type="text" class="form-control" id="appendedTitle" name="appendedGroup[${groupIdCounter}][title][]" required></div>`;
                 newGroupDiv += '</div>';
                 newGroupDiv +=
                     `<div class="mb-3"><label for="appendedDescription" class="form-label">Description</label><textarea class="form-control" id="appendedDescription" name="appendedGroup[${groupIdCounter}][description][]" rows="4" required></textarea></div>`;
                 newGroupDiv += '<div id="appendedCategories-' + newGroupId + '"></div>';
                 newGroupDiv +=
                     '<button type="button" class="btn btn-secondary" id="appendDataBtn-' + newGroupId +
-                    '">Add New Category</button>';
+                    '">New Sub-Category</button>';
                 newGroupDiv += '</div>';
                 newGroupDiv += '</div>';
                 newGroupDiv += '</div>';

@@ -42,13 +42,15 @@
                                         <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
-                                            <form action="{{ route('definecategories', ['id' => $topic->id]) }}"
-                                                method="get" class="float-right">
-                                                @csrf
-                                                <div class="float-right">
-                                                    <button type="submit" class="btn btn-warning  btn-sm me-1 float-right">Edit</button>
-                                                </div>
-                                            </form>
+                                            <div style="text-align:right">
+                                                <form action="{{ route('definecategories', ['id' => $topic->id]) }}"
+                                                    method="get" class="">
+                                                    @csrf
+                                                    <div>
+                                                        <button type="submit" class="btn btn-secondary  btn-sm">Add New Category</button>
+                                                    </div>
+                                                </form>
+                                            </div>
 
                                             @php
                                                 // Group categories by their 'group' attribute

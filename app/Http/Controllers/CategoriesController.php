@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DefineCategories;
 use App\Models\Topics;
+use Illuminate\Support\Facades\Route;
 
 class CategoriesController extends Controller
 {
@@ -15,13 +16,6 @@ class CategoriesController extends Controller
     public function create($id)
     {
         $topic = Topics::find($id);
-        // $topics = Topics::all();
-
-        // Assuming you have a method to get groups for each topic
-        // $topicGroups = Topics::pluck('groups', 'id');
-
-
-
         return view('admin.definecategories', ['topic' => $topic]);
     }
 
@@ -43,8 +37,15 @@ class CategoriesController extends Controller
     // }
 
     public function store(Request $request){
-        dd($request->all());
+        // dd($request->all());
         // echo "<pre>"; print_r($request->all()); exit();
+        $referringUrl = $request->headers->get('referer');
+        // Get the path from the URL
+        $path = parse_url($referringUrl, PHP_URL_PATH);
+
+        // Get the route from the path
+        $route = Route::getRoutes()->match(app('request')->create($path))->getName();
+
         $topicTitle = $request['topic_title'];
         $topic = auth()->user()->definetopic()->where('title', $topicTitle)->firstOrNew();
         // dd($topicTitle);
@@ -70,15 +71,36 @@ class CategoriesController extends Controller
         // $mainCategory = auth()->user()->definecategories()->create($mainCategoryData);
     
         // Access the appended data JSON string and decode it into an array
-        $appendedData = json_decode($request['appendedData'], true);
-    
-        // Iterate through the appended data and create categories
-        foreach ($appendedData as $appendedCategoryData) {
-            $appendedCategoryData['topic_id'] = $topicId; // Assign the topic_id
-            auth()->user()->definecategories()->create($appendedCategoryData);
+        $appendedData =$request['appendedGroup'];
+      
+        foreach ($appendedData as $group) {
+            $groupTitle = $group[0]; 
+        
+            // Insert or use the group title in the database here
+        
+            $titles = $group['title'];
+            $descriptions = $group['description'];
+        
+            foreach ($titles as $index => $title) {
+                // Assuming $descriptions and $titles have the same length
+                $description = $descriptions[$index];
+                $mainCategoryData = [
+                        'title' => $title,
+                        'description' => $description,
+                        'group' => $groupTitle,
+                        'topic_id' => $topicId,
+                    ];
+                    auth()->user()->definecategories()->create($mainCategoryData);
+
+            }
         }
-    
-        return redirect()->route('definetopic')->with('success', 'Categories added successfully');
+        if($route == "definetopic"){
+            return redirect()->route('definetopic')->with('success', 'Categories added successfully');
+        }
+        else{
+            return redirect()->route('definecategories', ['id' => $topicId])->with('success', 'Categories added successfully');
+        }
+        
     }
     
     public function deleteCategory($id)

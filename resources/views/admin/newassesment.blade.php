@@ -61,7 +61,7 @@
                                                     <h5>{{ $group }}</h5>
                                                     @foreach ($categories as $category)
                                                         <li class="list-group-item" data-category-id="{{ $category->id }}">
-                                                            <span class="category-title">{{ $category->title }}</span>
+                                                            <input type="checkbox" class="me-2 chk" /><span class="category-title">{{ $category->title }}</span>
                                                         </li>
                                                     @endforeach
                                                 @empty
@@ -205,10 +205,21 @@
 
                     // Toggle the 'selected' class for the clicked category
                     $(this).toggleClass('selected2');
+
+                    if($(this).find(".chk").is(':checked'))
+                    {
+                        $(this).find(".chk").removeAttr('checked');
+                    }
+                    else
+                    {
+                        $(this).find(".chk").attr('checked', 'checked');
+                    }
+
                     $(this).find('.category-title').toggleClass('selected');
 
                     // Update the selected items list based on the 'selected' class
                     if ($(this).find('.category-title').hasClass('selected')) {
+                        
                         selectedItems.add(categoryId);
                         newlyAddedItems.delete(categoryId); // Remove from newly added items
                     } else {
