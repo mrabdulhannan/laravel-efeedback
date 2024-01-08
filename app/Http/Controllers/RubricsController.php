@@ -74,4 +74,13 @@ class RubricsController extends Controller
 
         // return response()->json(['success' => true]);
     }
+
+    public function tutorialpresentation(){
+        $topics = Topics::all();
+
+        // Assuming you have a method to get groups for each topic
+        $topicGroups = Topics::pluck('groups', 'id');
+
+        return view('admin.tutorialpresentation', compact('topics', 'topicGroups'));
+    }
 }
