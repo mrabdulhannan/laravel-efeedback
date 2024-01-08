@@ -43,7 +43,7 @@
     </style>
 @endpush
 @section('content')
-    <h1>tutorialpresentation</h1>
+    
     <!-- Row start -->
     <div class="row">
         <div class="col-xxl-12">
@@ -53,7 +53,9 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
+                <div class="card-header">
+                    <h2 class="card-title">Tutorial Presentation</h2>
+                </div>
                 <div class="card-body">
                     <div class="custom-tabs-container">
                         @if (Auth::user()->definetopic !== null && count(Auth::user()->definetopic) > 0)

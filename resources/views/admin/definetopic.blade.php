@@ -18,7 +18,7 @@
             <!-- Row start -->
             <div class="row">
                 <div class="col-xxl-12">
-                    <h4 class="card-title mb-3">Create New Assessment</h4>
+                    {{-- <h4 class="card-title mb-3"></h4> --}}
                     <div class="">
                         <div class="">
                             <div class="form-container">
@@ -27,6 +27,9 @@
                                     @csrf
 
                                     <div class="card">
+                                        <div class="card-header">
+                                            <h2 class="card-title">Create New Assessment</h2>
+                                        </div>
                                         <div class="card-body">                                            
                                             <div class="mb-3">
                                                 <label for="topic_title" class="form-label">Assessment <i>(like Leadership, Organizational Behavior, Marketing etc...)</i></label>
@@ -35,9 +38,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h4 class="card-title mb-3">Define Feedback Categories</h4>
+                                    {{-- <h4 class="card-title mb-3"></h4> --}}
+                                    <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title">Define Feedback Categories</h2>
+                                    </div>
                                     <div id="appendedGroups"></div>
-
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -71,8 +78,8 @@
                 
                
 
-                var newGroupDiv = '<div class="card">';
-                newGroupDiv += '<div class="card-body">';
+                // var newGroupDiv = '<div class="card">';
+                    var newGroupDiv = '<div class="card-body">';
                 newGroupDiv += '<div class="appended-div">';
                 newGroupDiv += '<div class="row">';
                 newGroupDiv +=
@@ -88,7 +95,7 @@
                     '">New Sub-Category</button>';
                 newGroupDiv += '</div>';
                 newGroupDiv += '</div>';
-                newGroupDiv += '</div>';
+                // newGroupDiv += '</div>';
 
                 $("#appendedGroups").append(newGroupDiv);
 

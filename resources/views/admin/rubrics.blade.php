@@ -53,7 +53,9 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
+                <div class="card-header">
+                    <h2 class="card-title">Defie Rubrics</h2>
+                </div>
                 <div class="card-body">
                     <div class="custom-tabs-container">
                         @if (Auth::user()->definetopic !== null && count(Auth::user()->definetopic) > 0)
