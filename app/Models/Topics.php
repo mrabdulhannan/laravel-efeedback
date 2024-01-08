@@ -22,5 +22,10 @@ class Topics extends Model
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function rubrics()
+    {
+        return $this->belongsToMany(Rubrics::class);
+    }
     
 }

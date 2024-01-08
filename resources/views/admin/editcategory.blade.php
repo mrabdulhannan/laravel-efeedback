@@ -32,7 +32,7 @@
 
 
 
-                                <!-- Add an empty group dropdown that will be populated dynamically -->
+                                {{-- <!-- Add an empty group dropdown that will be populated dynamically -->
                                 <div class="mb-3">
                                     <label for="group" class="form-label">Group</label>
                                     <div class="input-group">
@@ -40,6 +40,13 @@
                                             <!-- The groups for the selected topic will be dynamically populated here -->
                                         </select>
                                     </div>
+                                </div> --}}
+
+                                <!-- Group Input -->
+                                <div class="mb-3">
+                                    <label for="group" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="group" name="group"
+                                        value="{{ $category->group }}" required>
                                 </div>
 
                                 <!-- Title Input -->

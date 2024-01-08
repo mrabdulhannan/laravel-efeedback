@@ -13,21 +13,23 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('define_categories', function (Blueprint $table) {
+        Schema::create('rubrics', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('title');
-            $table->text('description');
-            $table->string('group');
+            $table->string('title')->nullable();
+            $table->text('first')->nullable();
+            $table->text('second')->nullable();
+            $table->text('secondtwo')->nullable();
+            $table->text('third')->nullable();
+            $table->text('pass')->nullable();
+            $table->text('fail')->nullable();
             $table->unsignedBigInteger('topic_id'); // Corrected data type to unsignedBigInteger
             $table->foreign('topic_id')
                 ->references('id')
                 ->on('topics')
                 ->onDelete('cascade');
-
             $table->timestamps();
             $table->index('user_id');
-
         });
     }
 
@@ -38,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('define_categories');
+        Schema::dropIfExists('rubrics');
     }
 };
