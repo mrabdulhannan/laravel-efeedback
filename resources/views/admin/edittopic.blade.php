@@ -45,11 +45,11 @@
                                 </div>
 
                                 <!-- Description Textarea -->
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label for="groups" class="form-label">Goups (Must be "," separated)</label>
                                     <input type="text" class="form-control" id="groups" name="groups" rows="4"
                                         value="{{ $topic->groups }}" />
-                                </div>
+                                </div> --}}
 
                                 <table class="table">
                                     <tr>

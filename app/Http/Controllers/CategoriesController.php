@@ -74,7 +74,7 @@ class CategoriesController extends Controller
         $appendedData =$request['appendedGroup'];
       
         foreach ($appendedData as $group) {
-            $groupTitle = $group[0]; 
+            $groupTitle = $group[0]??""; 
         
             // Insert or use the group title in the database here
         

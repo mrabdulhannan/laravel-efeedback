@@ -38,52 +38,20 @@ class TopicsController extends Controller
         return view('admin.alltopics');
     }
 
-    // public function updatetopic(Request $request, $topicId)
-    // {
-    //     // Validate the incoming request data as needed
-    //     $request->validate([
-    //         'total_assessments' => 'integer',
-    //         'start_date' => 'nullable|date_format:Y-m-d',
-    //         'end_date' => 'nullable|date_format:Y-m-d',
-    //     ]);
-
-    //     // Find the topic by ID
-    //     $topic = Topics::findOrFail($topicId);
-
-    //     // dd($request->all());
-
-    //     // Update the topic attributes if the corresponding input exists in the request
-    //     if ($request->has('total_assessments')) {
-    //         $topic->total_assessments = $request->input('total_assessments');
-    //     }
-
-    //     if ($request->has('start_date')) {
-    //         $topic->start_date = $request->input('start_date');
-    //     }
-
-    //     if ($request->has('end_date')) {
-    //         $topic->end_date = $request->input('end_date');
-    //     }
-
-        
-    //     // dd($topic->getAttributes());
-    //     $topic->save();
-
-    //     // Redirect back or to a specific route after updating
-    //     // return redirect()->back()->with('success', 'Topic updated successfully');
-    //     // Redirect back or to a specific route after updating
-    //     return redirect()->route('home')->with('success', 'Topic updated successfully');
-    // }
-
     public function updatetopicpost(Request $request, $topicId)
     {
-        // dd($request->all());
-        $referringUrl = $request->headers->get('referer');
-        // Get the path from the URL
-        $path = parse_url($referringUrl, PHP_URL_PATH);
-
-        // Get the route from the path
-        $route = Route::getRoutes()->match(app('request')->create($path))->getName();
+    
+        try {
+            $referringUrl = $request->headers->get('referer');
+            
+            // Get the path from the URL
+            $path = parse_url($referringUrl, PHP_URL_PATH);
+        
+            // Get the route from the path
+            $route = Route::getRoutes()->match(app('request')->create($path))->getName();
+        } catch (\Exception $e) {
+            $route = $path;
+        }
         // Validate the incoming request data as needed
         $request->validate([
             'title' => 'string',
