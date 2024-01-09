@@ -69,8 +69,7 @@
                                 </ul>
 
                                 <div class="tab-content" id="customTabContent">
-                                    @foreach (Auth::user()->definetopic as $key => $topic)
-                                        {{ $key }}
+                                    @foreach (Auth::user()->definetopic as $key => $topic)      
                                         <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
@@ -223,4 +222,12 @@
             }
         });
     </script>
+        <script>
+            $(document).ready(function() {
+                // Add 'active' class to the first tab on page load
+                $('#customTabs li:first-child a').addClass('active tab-active');
+    
+                // ... Your existing JavaScript code ...
+            });
+        </script>
 @endpush

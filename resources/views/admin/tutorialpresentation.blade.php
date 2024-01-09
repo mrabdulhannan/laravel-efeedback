@@ -210,11 +210,11 @@
                                                     <th width="150" valign="middle">Tutor Signature
                                                     </th>
                                                     <td><input type="text" id="tutor_sign" name="tutor_sign"
-                                                            class="form-control" /></td>
+                                                            class="form-control" value="{{ Auth::user()->name }}" /></td>
                                                     <th width="150" valign="middle">Date
                                                     </th>
-                                                    <td><input type="date" class="form-control" name="end_date"
-                                                            value=""></td>
+                                                    <td><input type="date" class="form-control" id="end_date" name="end_date"
+                                                            value="{{ now()->format('Y-m-d') }}"></td>
                                                 </tr>
                                             </table>
                                             <div id="alldata">
@@ -222,7 +222,7 @@
                                             </div>
 
                                             <div class="card-header new-rubic mb-3">
-                                                <button id="copyDatabtn" class="btn btn-secondary">Copy Data</button>
+                                                <button id="copyDatabtn" class="btn btn-secondary">Download</button>
                                             </div>
                                         </div>
                                     </div>
@@ -299,49 +299,6 @@
         // 
     </script>
 
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('copyDatabtn').addEventListener('click', function() {
-                copyData('student_name', 'student_id', 'student_mark', 'tutor_comment', 'alldata');
-            });
-
-            function copyData(nameId, studentId, markId, tutorCommentId, alldataId) {
-                var nameInput = document.getElementById(nameId);
-                var studentIdInput = document.getElementById(studentId);
-                var markInput = document.getElementById(markId);
-                var tutorCommentTextarea = document.getElementById(tutorCommentId);
-                var alldata = document.getElementById(alldataId);
-
-                if (nameInput && studentIdInput && markInput && tutorCommentTextarea && alldata) {
-                    // Copy data to the target textarea
-                    alldata.innerHTML = "Name: " + nameInput.value + "\n";
-                    alldata.innerHTML += "Student ID: " + studentIdInput.value + "\n";
-                    alldata.innerHTML += "Mark: " + markInput.value + "\n";
-                    alldata.innerHTML += "tutor Comment: " + tutorCommentTextarea.value;
-
-                    // Send data to the controller
-                    var formData = new FormData();
-                    formData.append('name', nameInput.value);
-                    formData.append('student_id', studentIdInput.value);
-                    formData.append('mark', markInput.value);
-                    formData.append('tutor_comment', tutorCommentTextarea.value);
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '{{ route('sendDataToController') }}', true);
-                    xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            console.log('Data sent successfully');
-                            // Handle the response if needed
-                            console.log('Status:', xhr.status);
-                            console.log('Response:', xhr.responseText);
-                        }
-                    };
-                    xhr.send(formData);
-                }
-            }
-        });
-    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('#copyDatabtn').forEach(function(deleteLink) {
@@ -349,25 +306,39 @@
                     event.preventDefault();
 
                     // You can show a confirmation dialog here if needed
-                    var confirmDelete = confirm('Are you sure you want to delete this rubric?');
-                    'student_name', 'student_id', 'student_mark', 'tutor_comment', 'alldata'
+                    var confirmDelete = confirm('Are you sure you want to download?');
+
+                    //'student_name', 'student_id', 'student_mark', 'tutor_comment', 'alldata'
                     var nameInput = document.getElementById('student_name');
                     var studentIdInput = document.getElementById('student_id');
                     var markInput = document.getElementById('student_mark');
                     var tutorCommentTextarea = document.getElementById('tutor_comment');
+
+                    var tutor_sign = document.getElementById('tutor_sign');
+                    var end_date = document.getElementById('end_date');
+
                     var alldata = document.getElementById('alldataId');
+
                     if (confirmDelete) {
                         var rubricId = 1;
                         var wordForm = document.createElement('form');
                         wordForm.method = 'POST';
-                        wordForm.action = '{{ url('sendDataToController') }}';
+                        wordForm.action = '{{ url('sendDataToController?test=1') }}';
                         wordForm.innerHTML = '<input type="hidden" name="_method" value="POST">' +
-                            '{{ csrf_field() }}';
+                            '{{ csrf_field() }}<input type="hidden" name="student_name" value="'+nameInput.value+'"><input type="hidden" name="student_id" value="'+studentIdInput.value+'"><input type="hidden" name="student_mark" value="'+markInput.value+'"><input type="hidden" name="tutor_comment" value="'+tutorCommentTextarea.value+'"><input type="hidden" name="tutor_sign" value="'+tutor_sign.value+'"><input type="hidden" name="end_date" value="'+end_date.value+'">';
                         document.body.appendChild(wordForm);
                         wordForm.submit();
                     }
                 });
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Add 'active' class to the first tab on page load
+            $('#customTabs li:first-child a').addClass('active tab-active');
+
+            // ... Your existing JavaScript code ...
         });
     </script>
 @endpush

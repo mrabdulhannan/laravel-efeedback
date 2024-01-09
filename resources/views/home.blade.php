@@ -26,7 +26,7 @@
                                             <ul class="nav nav-tabs" id="customTabs" role="tablist">
                                                 @foreach (Auth::user()->definetopic as $key => $topic)
                                                     <li class="nav-item" role="presentation">
-                                                        <a class="nav-link {{ $key === 0 ? 'active' : '' }}"
+                                                        <a class="nav-link {{ $key === 0 ? 'active tab-active' : '' }}"
                                                             data-bs-toggle="tab" href="#tab-{{ $topic->id }}"
                                                             role="tab" aria-controls="tab-{{ $topic->id }}"
                                                             aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
@@ -74,7 +74,7 @@
                                                                     <th width="250" valign="middle">Today’s Date</th>
                                                                     <td><input type="date" class="form-control"
                                                                             name="start_date"
-                                                                            value="{{ optional($topic->start_date)->format('Y-m-d') }}">
+                                                                            value="{{ now()->format('Y-m-d') }}">
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -92,18 +92,21 @@
                                                                             value="6" />
                                                                     </td>
                                                                 </tr>
-                                                                {{-- <tr>
-                                                                    <th width="250" valign="middle">Days remaining</th>
-                                                                    <td>
-                                                                        <input type="text" class="form-control" name="days_remaining" id="days_remaining" value="" />
-                                                                    </td>
-                                                                </tr> --}}
 
                                                                 <tr>
                                                                     <th width="250" valign="middle">Provided feedback
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="provided_feedback"
+                                                                            value="{{ $categoryCount }}" />
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Remaining feedback
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="remaining_feedback"
                                                                             value="{{ $categoryCount }}" />
                                                                     </td>
                                                                 </tr>
@@ -143,6 +146,7 @@
 <!-- Your existing script tag... -->
 @push('script-page-level')
     <script>
+        $
         document.addEventListener('DOMContentLoaded', function() {
             var startDateInput = document.getElementsByName('start_date')[0];
             var endDateInput = document.getElementsByName('end_date')[0];
@@ -173,6 +177,14 @@
                     daysRemainingInput.value = ''; // Reset to empty if either date is not provided
                 }
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Add 'active' class to the first tab on page load
+            $('#customTabs li:first-child a').addClass('active tab-active');
+
+            // ... Your existing JavaScript code ...
         });
     </script>
 @endpush

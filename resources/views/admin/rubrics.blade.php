@@ -243,4 +243,12 @@
             }
         });
     </script>
+        <script>
+            $(document).ready(function() {
+                // Add 'active' class to the first tab on page load
+                $('#customTabs li:first-child a').addClass('active tab-active');
+    
+                // ... Your existing JavaScript code ...
+            });
+        </script>
 @endpush
