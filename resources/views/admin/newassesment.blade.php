@@ -105,7 +105,7 @@
                                                                     <div class="accordion-item">
                                                                         <h2 class="accordion-header"
                                                                             id="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                            <button class="accordion-button" type="button"
+                                                                            <button class="accordion-button collapsed" type="button"
                                                                                 data-bs-toggle="collapse"
                                                                                 data-bs-target="#collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
                                                                                 aria-expanded="true"
@@ -114,7 +114,7 @@
                                                                             </button>
                                                                         </h2>
                                                                         <div id="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                            class="accordion-collapse collapse show"
+                                                                            class="accordion-collapse collapse"
                                                                             aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
                                                                             data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
                                                                             <div class="accordion-body">

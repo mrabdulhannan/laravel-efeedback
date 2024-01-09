@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DocumentController;
 
 
 /*
@@ -76,3 +77,5 @@ Route::get('/tutorialpresentation', [App\Http\Controllers\RubricsController::cla
 Route::post('/storerubrics', [App\Http\Controllers\RubricsController::class, 'store'])->name('storerubrics');
 Route::put('/updaterubrics/{id}', [App\Http\Controllers\RubricsController::class, 'updaterubrics'])->name('updaterubrics');
 Route::delete('/deleteRubric/{id}', [App\Http\Controllers\RubricsController::class, 'deleteRubric'])->name('deleteRubric');
+// Route::get('/generate-word-document', [DocumentController::class, 'generateWordDocument']);
+Route::post('/sendDataToController', [App\Http\Controllers\DocumentController::class, 'generateWordDocument'])->name('sendDataToController');
