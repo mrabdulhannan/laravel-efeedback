@@ -89,7 +89,7 @@
                                                                     <th width="250" valign="middle">Days remaining</th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="days_remaining" id="days_remaining"
-                                                                            value="6" />
+                                                                            value="6"  readonly/>
                                                                     </td>
                                                                 </tr>
 
@@ -98,7 +98,7 @@
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="provided_feedback"
-                                                                            value="{{ $categoryCount }}" />
+                                                                            value="{{$topic->provided_feedback}}" />
                                                                     </td>
                                                                 </tr>
 
@@ -107,7 +107,7 @@
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="remaining_feedback"
-                                                                            value="{{ $categoryCount }}" />
+                                                                            value="{{  $topic->total_assessments - $topic->provided_feedback  }}" readonly />
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -117,11 +117,6 @@
                                                         <!-- Your existing form code... -->
 
                                                         <p>
-                                                            {{-- @if ($categoryCount > 0)
-                                                                Number of categories for this topic: {{ $categoryCount }}
-                                                            @else
-                                                                No categories available for this topic.
-                                                            @endif --}}
                                                         </p>
                                                     </div>
                                                 @endforeach

@@ -13,7 +13,7 @@
                     </div>
                 @endif
                 <div class="card-header">
-                    <h2 class="card-title">All Topics</h2>
+                    <h2 class="card-title">All Feedbacks</h2>
                 </div>
                 <div class="card-body">
                     <div class="">

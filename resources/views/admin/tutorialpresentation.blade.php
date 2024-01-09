@@ -213,8 +213,8 @@
                                                             class="form-control" value="{{ Auth::user()->name }}" /></td>
                                                     <th width="150" valign="middle">Date
                                                     </th>
-                                                    <td><input type="date" class="form-control" id="end_date" name="end_date"
-                                                            value="{{ now()->format('Y-m-d') }}"></td>
+                                                    <td><input type="date" class="form-control" id="end_date"
+                                                            name="end_date" value="{{ now()->format('Y-m-d') }}"></td>
                                                 </tr>
                                             </table>
                                             <div id="alldata">
@@ -240,10 +240,10 @@
 @endsection
 
 @push('script-page-level')
-    <script>
+    {{-- <script>
         function highlightAndAppend(cell, textareaId) {
             // Highlight the clicked cell
-            cell.style.backgroundColor = '#ffff99';
+            toggleBackground(cell)
 
             // Get the value of the clicked cell
             var cellValue = cell.innerText;
@@ -254,50 +254,74 @@
             textarea.innerHTML += cellValue + '\n';
 
         }
-    </script>
+
+        function toggleBackground(cell) {
+            // Check the current background color
+            var currentColor = cell.style.backgroundColor || window.getComputedStyle(cell).backgroundColor;
+
+            // Define the two colors you want to toggle between
+            var color1 = '#ffff99'; // Your first color
+            var color2 = '#ffffff'; // Your second color
+
+            // Toggle the background color
+            cell.style.backgroundColor = currentColor === color1 ? color2 : color1;
+
+            // Check the background color of the parent element if not set directly on the cell
+            if (cell.style.backgroundColor !== currentColor) {
+                cell.parentElement.style.backgroundColor = currentColor === color1 ? color2 : color1;
+            }
+        }
+    </script> --}}
+
     <script>
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     document.getElementById('copyDatabtn').addEventListener('click', function () {
-        //         copyData('studentInfo', 'alldata');
-        //     });
+        function highlightAndAppend(cell, textareaId) {
+            var tr = cell.closest('tr'); // Get the parent row (TR)
 
-        //     function copyData(sourceId, targetId) {
-        //         var sourceRow = document.getElementById(sourceId);
-        //         var targetTextarea = document.getElementById(targetId);
+            // Clear selection from other TDs in the same row
+            tr.querySelectorAll('.selected-cell').forEach(function(otherCell) {
+                resetBackground(otherCell);
+                otherCell.classList.remove('selected-cell');
+            });
 
-        //         if (sourceRow && targetTextarea) {
-        //             // Highlight the source row
-        //             sourceRow.style.backgroundColor = '#ffff99';
+            // Highlight the clicked cell
+            toggleBackground(cell);
+            cell.classList.add('selected-cell');
 
-        //             // Copy data to the target textarea
-        //             targetTextarea.innerHTML = sourceRow.innerText;
-        //             targetTextarea.innerHTML += '\n';
-        //         }
-        //     }
-        // });
-        //     document.addEventListener('DOMContentLoaded', function() {
-        //         document.getElementById('copyDatabtn').addEventListener('click', function() {
-        //             copyData('student_name', 'student_id', 'student_mark', 'tutor_comment', 'alldata');
-        //         });
+            // Get the value of the clicked cell
+            var cellValue = cell.innerText;
 
-        //         function copyData(nameId, studentId, markId, tutorCommentId, alldataId) {
-        //             var nameInput = document.getElementById(nameId);
-        //             var studentIdInput = document.getElementById(studentId);
-        //             var markInput = document.getElementById(markId);
-        //             var tutorCommentTextarea = document.getElementById(tutorCommentId);
-        //             var alldata = document.getElementById(alldataId);
+            // Append the value to the tutor comment textarea
+            var textarea = document.getElementById(textareaId);
 
-        //             if (nameInput && studentIdInput && markInput && tutorCommentTextarea && alldata) {
-        //                 // Copy data to the target textarea
-        //                 alldata.innerHTML = "Name: " + nameInput.value + "\n";
-        //                 alldata.innerHTML += "Student ID: " + studentIdInput.value + "\n";
-        //                 alldata.innerHTML += "Mark: " + markInput.value;
-        //                 alldata.innerHTML += "tutor Comment: " + tutorCommentTextarea.value;
-        //             }
-        //         }
-        //     });
-        // 
+            textarea.innerHTML += cellValue + '\n';
+        }
+
+        function toggleBackground(cell) {
+            // Check the current background color
+            var currentColor = cell.style.backgroundColor || window.getComputedStyle(cell).backgroundColor;
+
+            // Define the two colors you want to toggle between
+            var color1 = '#ffff99'; // Your first color
+            var color2 = '#ffffff'; // Your second color
+
+            // Toggle the background color
+            cell.style.backgroundColor = currentColor === color1 ? color2 : color1;
+
+            // Check the background color of the parent element if not set directly on the cell
+            if (cell.style.backgroundColor !== currentColor) {
+                cell.parentElement.style.backgroundColor = currentColor === color1 ? color2 : color1;
+            }
+        }
+
+        function resetBackground(cell) {
+            // Reset the background color to default (no color)
+            cell.style.backgroundColor = '';
+            cell.parentElement.style.backgroundColor = '';
+        }
+
+        // Rest of your script...
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -325,7 +349,15 @@
                         wordForm.method = 'POST';
                         wordForm.action = '{{ url('sendDataToController?test=1') }}';
                         wordForm.innerHTML = '<input type="hidden" name="_method" value="POST">' +
-                            '{{ csrf_field() }}<input type="hidden" name="student_name" value="'+nameInput.value+'"><input type="hidden" name="student_id" value="'+studentIdInput.value+'"><input type="hidden" name="student_mark" value="'+markInput.value+'"><input type="hidden" name="tutor_comment" value="'+tutorCommentTextarea.value+'"><input type="hidden" name="tutor_sign" value="'+tutor_sign.value+'"><input type="hidden" name="end_date" value="'+end_date.value+'">';
+                            '{{ csrf_field() }}<input type="hidden" name="student_name" value="' +
+                            nameInput.value + '"><input type="hidden" name="student_id" value="' +
+                            studentIdInput.value +
+                            '"><input type="hidden" name="student_mark" value="' + markInput.value +
+                            '"><input type="hidden" name="tutor_comment" value="' +
+                            tutorCommentTextarea.value +
+                            '"><input type="hidden" name="tutor_sign" value="' + tutor_sign.value +
+                            '"><input type="hidden" name="end_date" value="' + end_date.value +
+                            '">';
                         document.body.appendChild(wordForm);
                         wordForm.submit();
                     }

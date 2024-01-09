@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @push('stylesheet-page-level')
+<style>
+    .custom-light-gray-bg {
+      background-color: #f8f9fa; /* Set your desired light gray color */
+    }
+  </style>
 @endpush
 
 @section('content')
@@ -78,7 +83,7 @@
                 
                
 
-                var newGroupDiv = '<div class="card border border-dark p-3">';
+                var newGroupDiv = '<div class="card border border-dark p-3 custom-light-gray-bg">';
                 newGroupDiv += '<div class="card-body">';
                 newGroupDiv += '<div class="appended-div">';
                 newGroupDiv += '<div class="row">';

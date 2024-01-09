@@ -60,7 +60,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="feedbackLink">
                         <li><a class="dropdown-item" href="{{ route('definetopic') }}">Create New Assessment</a></li>
-                        <li><a class="dropdown-item" href="{{ route('alltopics') }}">Show All</a></li>
+                        <li><a class="dropdown-item" href="{{ route('alltopics') }}">Show All Feedbacks</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

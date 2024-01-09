@@ -59,6 +59,8 @@ class TopicsController extends Controller
             'total_assessments' => 'nullable|integer',
             'start_date' => 'nullable|date_format:Y-m-d',
             'end_date' => 'nullable|date_format:Y-m-d',
+            'provided_feedback' => 'nullable|string',
+            'remaining_feedback' => 'nullable|integer',
         ]);
 
         
@@ -88,16 +90,25 @@ class TopicsController extends Controller
             $topic->end_date = $request->input('end_date');
         }
 
+        if ($request->has('provided_feedback')) {
+            $topic->provided_feedback = $request->input('provided_feedback');
+        }
+
+        if ($request->has('remaining_feedback')) {
+            $topic->remaining_feedback = $request->input('remaining_feedback');
+        }
+
+
         
         // dd($topic->getAttributes());
         $topic->save();
 
         if($route == "home"){
-            return redirect()->route('home', ['id' => $topicId])->with('success', 'Topic updated successfully');
+            return redirect()->route('home', ['id' => $topicId])->with('success', 'Record updated successfully');
         }
         else{
             // Redirect back or to a specific route after updating
-        return redirect()->route('edittopic.get', ['id' => $topicId])->with('success', 'Topic updated successfully');
+        return redirect()->route('edittopic.get', ['id' => $topicId])->with('success', 'Record updated successfully');
 
         }
                
