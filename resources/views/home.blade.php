@@ -111,6 +111,16 @@
                                                                             readonly />
                                                                     </td>
                                                                 </tr>
+
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Feedback/Day
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="feedback_day"
+                                                                            value="{{ ($topic->total_assessments - $topic->provided_feedback) }}"
+                                                                            readonly />
+                                                                    </td>
+                                                                </tr>
                                                             </table>
 
                                                             <button type="submit" class="btn btn-primary">Update</button>
@@ -235,17 +245,23 @@
                 var totalAssessmentsInput = $(tabId).find('input[name="total_assessments"]');
                 var providedFeedbackInput = $(tabId).find('input[name="provided_feedback"]');
                 var remainingFeedbackInput = $(tabId).find('input[name="remaining_feedback"]');
+                var feedbackPerDayInput = $(tabId).find('input[name="feedback_day"]');
+                var remainingDayInput = $(tabId).find('input[name="days_remaining"]');
+                
 
                 totalAssessmentsInput.on('input', function () {
                     updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
                 });
 
                 providedFeedbackInput.on('input', function () {
                     updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
                 });
 
                 // Initial calculation on page load
                 updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
             }
 
             function updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput) {
@@ -260,6 +276,14 @@
                 } else {
                     remainingFeedbackInput.val(''); // Reset to empty if values are not valid
                 }
+            }
+
+            function UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput){
+                var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+                var remainingDays = parseInt(remainingDayInput.val(), 10);
+                feedbackPerDayInput.val((totalAssessments-providedFeedback)/remainingDays);
+
             }
         });
     </script>
