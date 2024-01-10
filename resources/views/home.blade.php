@@ -37,7 +37,7 @@
                                                                     ->count();
                                                             @endphp
                                                             @if ($categoryCount > 0)
-                                                                <span class="badge bg-info">{{ $categoryCount }}</span>
+                                                                {{-- <span class="badge bg-info">{{ $categoryCount }}</span> --}}
                                                             @endif
                                                         </a>
                                                     </li>
@@ -282,7 +282,14 @@
                 var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
                 var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
                 var remainingDays = parseInt(remainingDayInput.val(), 10);
-                feedbackPerDayInput.val((totalAssessments-providedFeedback)/remainingDays);
+                feedbackPerDay = (totalAssessments-providedFeedback)/remainingDays;
+                if(isNaN(feedbackPerDay)){
+                    feedbackPerDayInput.val(0);
+                }
+                else{
+                    feedbackPerDayInput.val(Math.round(feedbackPerDay));
+                }
+                
 
             }
         });
