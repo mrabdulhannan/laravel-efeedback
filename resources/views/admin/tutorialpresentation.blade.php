@@ -154,8 +154,8 @@
                                                         method="post">
                                                         @csrf <!-- Laravel CSRF token -->
                                                         @method('PUT')
-                                                        <input type="text" name="topic_id" hidden
-                                                            value="{{ $topic->id }}">
+                                                        {{-- <input type="text" name="topic_id" id ="topic_id" hidden
+                                                            value="{{ $topic->id }}">  --}}
 
                                                         <tr>
                                                             <td contenteditable="false" class="">
@@ -237,7 +237,7 @@
                                                 </div>
 
                                                 <div class="card-header new-rubic mb-3">
-                                                    <button id="copyDatabtn" class="btn btn-primary">Download</button>
+                                                    <button id="copyDatabtn" data-tid="{{ $topic->id }}" class="btn btn-primary">Download</button>
                                                 </div>
 
                                             </div>
@@ -289,24 +289,25 @@
                     event.preventDefault();
                     // var topicId = {{ $topic->id }};
                     // You can show a confirmation dialog here if needed
-                    var confirmDelete = confirm('Are you sure you want to download?');
+                    // var confirmDelete = confirm('Are you sure you want to download?');
 
                     //'student_name', 'student_id', 'student_mark', 'tutor_comment', 'alldata'
-                    var topicId = document.getElementById('topic_id');
+                    // var topicId = document.getElementById('topic_id');
+                    var topicId = $(this).data('tid');
+                    // alert(topicId);
                     var comment_id = `tutor_comment_${topicId}`;
                     var nameInput = document.getElementById('student_name');
                     var studentIdInput = document.getElementById('student_id');
                     var markInput = document.getElementById('student_mark');
                     var tutorCommentTextarea = document.getElementById(comment_id);
 
-                    alert(comment_id);
 
                     var tutor_sign = document.getElementById('tutor_sign');
                     var end_date = document.getElementById('end_date');
 
                     var alldata = document.getElementById('alldataId');
 
-                    if (confirmDelete) {
+                    if (0==0) {
                         var rubricId = 1;
                         var wordForm = document.createElement('form');
                         wordForm.method = 'POST';
