@@ -307,7 +307,7 @@
                     var nameInput = document.getElementById('student_name');
                     var studentIdInput = document.getElementById('student_id');
                     var markInput = document.getElementById('student_mark');
-                    var tutorCommentTextarea = document.getElementById('tutor_comment');
+                    var tutorCommentTextarea = document.getElementById('tutor_comment_{{ $topic->id }}');
 
                     var tutor_sign = document.getElementById('tutor_sign');
                     var end_date = document.getElementById('end_date');
