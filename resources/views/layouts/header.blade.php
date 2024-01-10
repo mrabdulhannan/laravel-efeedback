@@ -28,7 +28,9 @@
         line-height: 1.3;
     }
 
-    .webnav-bar .navbar-nav .nav-link:hover {
+    .webnav-bar .navbar-nav .nav-link:hover,
+    .webnav-bar .navbar-nav .nav-link.active
+     {
         background: #fff;
         color: #038199 !important;
     }

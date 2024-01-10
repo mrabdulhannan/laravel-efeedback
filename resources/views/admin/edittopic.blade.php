@@ -27,7 +27,7 @@
                 <div class="col-xxl-12">
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="card-title">Update Topic</h2>
+                            <h2 class="card-title">Update Feedback</h2>
                             <form action="{{ route('updatetopicpost', ['topicId' => $topic->id]) }}" method="post">
                                 @csrf
                                 @php
@@ -73,9 +73,21 @@
                                                 value="6" /></td>
                                     </tr>
                                     <tr>
-                                        <th width="250" valign="middle">Provided feedback</th>
-                                        <td><input type="text" class="form-control" name="provided_feedback"
-                                                value="{{ $categoryCount }}" /></td>
+                                        <th width="250" valign="middle">Provided feedback
+                                        </th>
+                                        <td><input type="text" class="form-control"
+                                                name="provided_feedback"
+                                                value="{{$topic->provided_feedback}}" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="250" valign="middle">Remaining feedback
+                                        </th>
+                                        <td><input type="text" class="form-control"
+                                                name="remaining_feedback"
+                                                value="{{  $topic->total_assessments - $topic->provided_feedback  }}" readonly />
+                                        </td>
                                     </tr>
                                 </table>
                                 <!-- Save Button -->

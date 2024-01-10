@@ -89,7 +89,7 @@
                                                                     <th width="250" valign="middle">Days remaining</th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="days_remaining" id="days_remaining"
-                                                                            value="6"  readonly/>
+                                                                            value="6" readonly />
                                                                     </td>
                                                                 </tr>
 
@@ -98,7 +98,7 @@
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="provided_feedback"
-                                                                            value="{{$topic->provided_feedback}}" />
+                                                                            value="{{ $topic->provided_feedback }}" />
                                                                     </td>
                                                                 </tr>
 
@@ -107,7 +107,8 @@
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="remaining_feedback"
-                                                                            value="{{  $topic->total_assessments - $topic->provided_feedback  }}" readonly />
+                                                                            value="{{ $topic->total_assessments - $topic->provided_feedback }}"
+                                                                            readonly />
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -179,7 +180,87 @@
             // Add 'active' class to the first tab on page load
             $('#customTabs li:first-child a').addClass('active tab-active');
 
-            // ... Your existing JavaScript code ...
+
+        });
+    </script>
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your existing script...
+
+            // Add event listener to recalculate remaining feedback when provided feedback changes
+            var providedFeedbackInput = document.getElementsByName('provided_feedback')[0];
+            var remainingFeedbackInput = document.getElementsByName('remaining_feedback')[0];
+
+            providedFeedbackInput.addEventListener('input', updateRemainingFeedback);
+
+            // Initial calculation on page load
+            updateRemainingFeedback();
+
+            function updateRemainingFeedback() {
+                var totalAssessments = parseInt(document.getElementsByName('total_assessments')[0].value, 10);
+                var providedFeedback = parseInt(providedFeedbackInput.value, 10);
+
+                if (!isNaN(totalAssessments) && !isNaN(providedFeedback)) {
+                    var remainingFeedback = totalAssessments - providedFeedback;
+
+                    // Display the calculated remaining feedback
+                    remainingFeedbackInput.value = remainingFeedback;
+                } else {
+                    remainingFeedbackInput.value = ''; // Reset to empty if values are not valid
+                }
+            }
+        });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Your existing script...
+
+            // Add event listener for changes in the active tab
+            $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var activeTabId = $(e.target).attr('href');
+                updateRemainingFeedbackForTab(activeTabId);
+            });
+
+            // Initial calculation on page load
+            updateRemainingFeedbackForActiveTabs();
+
+            function updateRemainingFeedbackForActiveTabs() {
+                $('#customTabs a[data-bs-toggle="tab"]').each(function () {
+                    var tabId = $(this).attr('href');
+                    updateRemainingFeedbackForTab(tabId);
+                });
+            }
+
+            function updateRemainingFeedbackForTab(tabId) {
+                var totalAssessmentsInput = $(tabId).find('input[name="total_assessments"]');
+                var providedFeedbackInput = $(tabId).find('input[name="provided_feedback"]');
+                var remainingFeedbackInput = $(tabId).find('input[name="remaining_feedback"]');
+
+                totalAssessmentsInput.on('input', function () {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                });
+
+                providedFeedbackInput.on('input', function () {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                });
+
+                // Initial calculation on page load
+                updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+            }
+
+            function updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput) {
+                var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+
+                if (!isNaN(totalAssessments) && !isNaN(providedFeedback)) {
+                    var remainingFeedback = totalAssessments - providedFeedback;
+
+                    // Display the calculated remaining feedback
+                    remainingFeedbackInput.val(remainingFeedback);
+                } else {
+                    remainingFeedbackInput.val(''); // Reset to empty if values are not valid
+                }
+            }
         });
     </script>
 @endpush

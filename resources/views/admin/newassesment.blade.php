@@ -43,7 +43,7 @@
                     <h3 class="card-title">Write New Feedback</h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="custom-tabs-container">
                         @if (Auth::user()->definetopic !== null && count(Auth::user()->definetopic) > 0)
                             <ul class="nav nav-tabs" id="customTabs" role="tablist">
                                 @foreach (Auth::user()->definetopic as $key => $topic)
@@ -51,11 +51,8 @@
                                         <a class="nav-link {{ $key === 0 ? 'active' : '' }}" data-bs-toggle="tab"
                                             href="#tab-{{ $topic->id }}" role="tab"
                                             aria-controls="tab-{{ $topic->id }}"
-                                            aria-selected="{{ $key === 0 ? 'true' : 'false' }}"
-                                            onclick="resetSelectedItems()">
-                                            {{ $topic->title }}
+                                            aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
                                             @php
-                                                // Count the categories for the current topic
                                                 $categoryCount = Auth::user()
                                                     ->definecategories->where('topic_id', $topic->id)
                                                     ->count();
@@ -67,81 +64,65 @@
                                     </li>
                                 @endforeach
                             </ul>
+                           
                             <div class="col-3">
                                 <div class="tab-content" id="customTabContent">
                                     @foreach (Auth::user()->definetopic as $key => $topic)
-                                        <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
-                                            id="tab-{{ $topic->id }}" role="tabpanel"
-                                            aria-labelledby="tab-{{ $topic->id }}">
-                                            <ul id="itemList_{{ $topic->id }}" class="list-group">
-                                                <!-- Item IDs will be dynamically added here -->
+                                    <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
+                                        id="tab-{{ $topic->id }}" role="tabpanel"
+                                        aria-labelledby="tab-{{ $topic->id }}">
+                                        <ul id="itemList_{{ $topic->id }}" class="list-group">
+                                            <!-- Item IDs will be dynamically added here -->
+                                            @php
+                                                // Group categories by their 'group' attribute
+                                                $groupedCategories = Auth::user()
+                                                    ->definecategories->where('topic_id', $topic->id)
+                                                    ->groupBy('group');
+                                                $totalGroups = $groupedCategories->count();
+                                            @endphp
+                                            @forelse ($groupedCategories as $group => $categories)
                                                 @php
-                                                    // Group categories by their 'group' attribute
-                                                    $groupedCategories = Auth::user()
-                                                        ->definecategories->where('topic_id', $topic->id)
-                                                        ->groupBy('group');
-                                                    $totalGroups = $groupedCategories->count();
+                                                    $cleanGroup = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $group));
                                                 @endphp
-                                                @foreach (Auth::user()->definetopic as $key => $topic)
-                                                    <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
-                                                        id="tab-{{ $topic->id }}" role="tabpanel"
-                                                        aria-labelledby="tab-{{ $topic->id }}">
-                                                        <ul id="itemList_{{ $topic->id }}" class="list-group">
-                                                            <!-- Item IDs will be dynamically added here -->
-                                                            @php
-                                                                // Group categories by their 'group' attribute
-                                                                $groupedCategories = Auth::user()
-                                                                    ->definecategories->where('topic_id', $topic->id)
-                                                                    ->groupBy('group');
-                                                                $totalGroups = $groupedCategories->count();
-                                                            @endphp
-                                                            @forelse ($groupedCategories as $group => $categories)
-                                                                @php
-                                                                    $cleanGroup = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $group));
-                                                                @endphp
 
-                                                                <div class="accordion mt-1"
-                                                                    id="accordion_{{ $topic->id }}_{{ $cleanGroup }}">
-                                                                    <div class="accordion-item">
-                                                                        <h2 class="accordion-header"
-                                                                            id="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                            <button class="accordion-button collapsed" type="button"
-                                                                                data-bs-toggle="collapse"
-                                                                                data-bs-target="#collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                                aria-expanded="true"
-                                                                                aria-controls="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                                {{ $group }}
-                                                                            </button>
-                                                                        </h2>
-                                                                        <div id="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                            class="accordion-collapse collapse"
-                                                                            aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                            data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                            <div class="accordion-body">
-                                                                                @foreach ($categories as $category)
-                                                                                    <li class="list-group-item"
-                                                                                        data-category-id="{{ $category->id }}">
-                                                                                        <input type="checkbox"
-                                                                                            class="me-2 chk" />
-                                                                                        <span
-                                                                                            class="category-title">{{ $category->title }}</span>
-                                                                                    </li>
-                                                                                @endforeach
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            @empty
-                                                                <p>No categories available for this topic.</p>
-                                                            @endforelse
-                                                        </ul>
+                                                <div class="accordion mt-1"
+                                                    id="accordion_{{ $topic->id }}_{{ $cleanGroup }}">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header"
+                                                            id="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                            <button class="accordion-button collapsed" type="button"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                                aria-expanded="true"
+                                                                aria-controls="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                                {{ $group }}
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                            class="accordion-collapse collapse"
+                                                            aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                            data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                            <div class="accordion-body">
+                                                                @foreach ($categories as $category)
+                                                                    <li class="list-group-item"
+                                                                        data-category-id="{{ $category->id }}">
+                                                                        <input type="checkbox"
+                                                                            class="me-2 chk" />
+                                                                        <span
+                                                                            class="category-title">{{ $category->title }}</span>
+                                                                    </li>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                @endforeach
+                                                </div>
 
-                                            </ul>
-                                        </div>
-                                    @endforeach
+                                            @empty
+                                                <p>No categories available for this topic.</p>
+                                            @endforelse
+                                        </ul>
+                                    </div>
+                                @endforeach
 
                                     <button id="addNewContentButton" class="btn btn-primary btn-sm mt-2">+</button>
                                 </div>
@@ -406,7 +387,7 @@
             // Add 'active' class to the first tab on page load
             $('#customTabs li:first-child a').addClass('active tab-active');
 
-            // ... Your existing JavaScript code ...
+
         });
     </script>
 @endpush

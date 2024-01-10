@@ -44,6 +44,10 @@
         .pointer-css {
             cursor: pointer;
         }
+
+        .highlight-text {
+            background-color: #ffff99;
+        }
     </style>
 @endpush
 @section('content')
@@ -58,7 +62,7 @@
                     </div>
                 @endif
                 <div class="card-header">
-                    <h2 class="card-title">Tutorial Presentation</h2>
+                    <h2 class="card-title">Write New Feedback</h2>
                 </div>
                 <div class="card-body">
                     <div class="custom-tabs-container">
@@ -161,32 +165,32 @@
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="first" placeholder="1st:">{{ $rubric->first }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->first }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="second" placeholder="2.1:">{{ $rubric->second }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->second }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="secondtwo" placeholder="2.2:">{{ $rubric->secondtwo }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->secondtwo }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="third" placeholder="3rd:">{{ $rubric->third }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->third }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="pass" placeholder="Pass:">{{ $rubric->pass }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->pass }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css">
                                                                 {{-- <textarea name="fail" placeholder="Fail:">{{ $rubric->fail }}</textarea> --}}
-                                                                <div onclick="highlightAndAppend(this, 'tutor_comment')">
+                                                                <div onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
                                                                     {{ $rubric->fail }}</div>
                                                             </td>
 
@@ -201,7 +205,8 @@
                                                     <th width="150" valign="middle">Tutor Commment
                                                     </th>
                                                     <td>
-                                                        <textarea id ="tutor_comment" name="tutor_comment" class="form-control" style="height: 150px;"></textarea>
+                                                        {{-- <textarea id ="tutor_comment" name="tutor_comment" class="form-control" style="height: 150px;"></textarea> --}}
+                                                        <textarea id="tutor_comment_{{ $topic->id }}" name="tutor_comment" class="form-control" style="height: 150px;" topic-id="{{ $topic->id }}"></textarea>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -240,52 +245,20 @@
 @endsection
 
 @push('script-page-level')
-    {{-- <script>
-        function highlightAndAppend(cell, textareaId) {
-            // Highlight the clicked cell
-            toggleBackground(cell)
-
-            // Get the value of the clicked cell
-            var cellValue = cell.innerText;
-
-            // Append the value to the tutor comment textarea
-            var textarea = document.getElementById(textareaId);
-
-            textarea.innerHTML += cellValue + '\n';
-
-        }
-
-        function toggleBackground(cell) {
-            // Check the current background color
-            var currentColor = cell.style.backgroundColor || window.getComputedStyle(cell).backgroundColor;
-
-            // Define the two colors you want to toggle between
-            var color1 = '#ffff99'; // Your first color
-            var color2 = '#ffffff'; // Your second color
-
-            // Toggle the background color
-            cell.style.backgroundColor = currentColor === color1 ? color2 : color1;
-
-            // Check the background color of the parent element if not set directly on the cell
-            if (cell.style.backgroundColor !== currentColor) {
-                cell.parentElement.style.backgroundColor = currentColor === color1 ? color2 : color1;
-            }
-        }
-    </script> --}}
 
     <script>
-        function highlightAndAppend(cell, textareaId) {
-            var tr = cell.closest('tr'); // Get the parent row (TR)
 
-            // Clear selection from other TDs in the same row
-            tr.querySelectorAll('.selected-cell').forEach(function(otherCell) {
-                resetBackground(otherCell);
-                otherCell.classList.remove('selected-cell');
-            });
+
+        function highlightAndAppend(cell, textareaId) {
+            // Check if the cell is already selected
+            if (cell.style.backgroundColor !== '' && cell.style.backgroundColor !== 'transparent') {
+                // If already selected, remove background color and return
+                resetBackground(cell);
+                return;
+            }
 
             // Highlight the clicked cell
             toggleBackground(cell);
-            cell.classList.add('selected-cell');
 
             // Get the value of the clicked cell
             var cellValue = cell.innerText;
@@ -318,8 +291,6 @@
             cell.style.backgroundColor = '';
             cell.parentElement.style.backgroundColor = '';
         }
-
-        // Rest of your script...
     </script>
 
 
@@ -371,6 +342,40 @@
             $('#customTabs li:first-child a').addClass('active tab-active');
 
             // ... Your existing JavaScript code ...
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Your existing script...
+
+            // Add event listener for changes in the active tab
+            $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var activeTabId = $(e.target).attr('href');
+                initializeTabFunctions(activeTabId);
+            });
+
+            // Initial setup for all tabs on page load
+            initializeAllTabs();
+
+            function initializeAllTabs() {
+                $('#customTabs a[data-bs-toggle="tab"]').each(function () {
+                    var tabId = $(this).attr('href');
+                    initializeTabFunctions(tabId);
+                });
+            }
+
+            function initializeTabFunctions(tabId) {
+                // Your existing code for each tab
+
+                // For example, if you have specific functions to call for each tab, call them here
+                // For your code, you can call functions related to highlighting and appending
+                // ...
+
+                // Initialize other tab-specific functionalities here
+            }
+
+            // ... Your existing functions and code ...
         });
     </script>
 @endpush
