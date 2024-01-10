@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @push('stylesheet-page-level')
+<style>
+    .custom-light-gray-bg {
+      background-color: #f8f9fa; /* Set your desired light gray color */
+    }
+  </style>
 @endpush
 
 @section('content')
@@ -41,7 +46,7 @@
                                     {{-- <h4 class="card-title mb-3"></h4> --}}
                                     <div class="card">
                                     <div class="card-header">
-                                        <h2 class="card-title">Define Feedback Categories</h2>
+                                        <h2 class="card-title mb-3">Define Feedback Categories</h2>
                                     </div>
                                     <div id="appendedGroups"></div>
                                     </div>
@@ -78,8 +83,8 @@
                 
                
 
-                // var newGroupDiv = '<div class="card">';
-                    var newGroupDiv = '<div class="card-body">';
+                var newGroupDiv = '<div class="card border border-dark p-3 custom-light-gray-bg">';
+                newGroupDiv += '<div class="card-body">';
                 newGroupDiv += '<div class="appended-div">';
                 newGroupDiv += '<div class="row">';
                 newGroupDiv +=
@@ -95,7 +100,7 @@
                     '">New Sub-Category</button>';
                 newGroupDiv += '</div>';
                 newGroupDiv += '</div>';
-                // newGroupDiv += '</div>';
+                newGroupDiv += '</div>';
 
                 $("#appendedGroups").append(newGroupDiv);
 

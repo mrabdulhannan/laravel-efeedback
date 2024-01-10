@@ -37,14 +37,17 @@ class CategoriesController extends Controller
     // }
 
     public function store(Request $request){
-        // dd($request->all());
-        // echo "<pre>"; print_r($request->all()); exit();
-        $referringUrl = $request->headers->get('referer');
-        // Get the path from the URL
-        $path = parse_url($referringUrl, PHP_URL_PATH);
-
-        // Get the route from the path
-        $route = Route::getRoutes()->match(app('request')->create($path))->getName();
+        try {
+            $referringUrl = $request->headers->get('referer');
+            
+            // Get the path from the URL
+            $path = parse_url($referringUrl, PHP_URL_PATH);
+        
+            // Get the route from the path
+            $route = Route::getRoutes()->match(app('request')->create($path))->getName();
+        } catch (\Exception $e) {
+            $route = $path;
+        }
 
         $topicTitle = $request['topic_title'];
         $topic = auth()->user()->definetopic()->where('title', $topicTitle)->firstOrNew();
@@ -74,7 +77,7 @@ class CategoriesController extends Controller
         $appendedData =$request['appendedGroup'];
       
         foreach ($appendedData as $group) {
-            $groupTitle = $group[0]; 
+            $groupTitle = $group[0]??"NA"; 
         
             // Insert or use the group title in the database here
         

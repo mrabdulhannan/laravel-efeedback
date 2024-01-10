@@ -26,7 +26,7 @@
                                             <ul class="nav nav-tabs" id="customTabs" role="tablist">
                                                 @foreach (Auth::user()->definetopic as $key => $topic)
                                                     <li class="nav-item" role="presentation">
-                                                        <a class="nav-link {{ $key === 0 ? 'active' : '' }}"
+                                                        <a class="nav-link {{ $key === 0 ? 'active tab-active' : '' }}"
                                                             data-bs-toggle="tab" href="#tab-{{ $topic->id }}"
                                                             role="tab" aria-controls="tab-{{ $topic->id }}"
                                                             aria-selected="{{ $key === 0 ? 'true' : 'false' }}">{{ $topic->title }}
@@ -37,7 +37,7 @@
                                                                     ->count();
                                                             @endphp
                                                             @if ($categoryCount > 0)
-                                                                <span class="badge bg-info">{{ $categoryCount }}</span>
+                                                                {{-- <span class="badge bg-info">{{ $categoryCount }}</span> --}}
                                                             @endif
                                                         </a>
                                                     </li>
@@ -74,7 +74,7 @@
                                                                     <th width="250" valign="middle">Today’s Date</th>
                                                                     <td><input type="date" class="form-control"
                                                                             name="start_date"
-                                                                            value="{{ optional($topic->start_date)->format('Y-m-d') }}">
+                                                                            value="{{ now()->format('Y-m-d') }}">
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -89,22 +89,36 @@
                                                                     <th width="250" valign="middle">Days remaining</th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="days_remaining" id="days_remaining"
-                                                                            value="6" />
+                                                                            value="6" readonly />
                                                                     </td>
                                                                 </tr>
-                                                                {{-- <tr>
-                                                                    <th width="250" valign="middle">Days remaining</th>
-                                                                    <td>
-                                                                        <input type="text" class="form-control" name="days_remaining" id="days_remaining" value="" />
-                                                                    </td>
-                                                                </tr> --}}
 
                                                                 <tr>
                                                                     <th width="250" valign="middle">Provided feedback
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="provided_feedback"
-                                                                            value="{{ $categoryCount }}" />
+                                                                            value="{{ $topic->provided_feedback }}" />
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Remaining feedback
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="remaining_feedback"
+                                                                            value="{{ $topic->total_assessments - $topic->provided_feedback }}"
+                                                                            readonly />
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <th width="250" valign="middle">Feedback/Day
+                                                                    </th>
+                                                                    <td><input type="text" class="form-control"
+                                                                            name="feedback_day"
+                                                                            value="{{ ($topic->total_assessments - $topic->provided_feedback) }}"
+                                                                            readonly />
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -114,11 +128,6 @@
                                                         <!-- Your existing form code... -->
 
                                                         <p>
-                                                            {{-- @if ($categoryCount > 0)
-                                                                Number of categories for this topic: {{ $categoryCount }}
-                                                            @else
-                                                                No categories available for this topic.
-                                                            @endif --}}
                                                         </p>
                                                     </div>
                                                 @endforeach
@@ -143,6 +152,7 @@
 <!-- Your existing script tag... -->
 @push('script-page-level')
     <script>
+        $
         document.addEventListener('DOMContentLoaded', function() {
             var startDateInput = document.getElementsByName('start_date')[0];
             var endDateInput = document.getElementsByName('end_date')[0];
@@ -172,6 +182,115 @@
                 } else {
                     daysRemainingInput.value = ''; // Reset to empty if either date is not provided
                 }
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Add 'active' class to the first tab on page load
+            $('#customTabs li:first-child a').addClass('active tab-active');
+
+
+        });
+    </script>
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your existing script...
+
+            // Add event listener to recalculate remaining feedback when provided feedback changes
+            var providedFeedbackInput = document.getElementsByName('provided_feedback')[0];
+            var remainingFeedbackInput = document.getElementsByName('remaining_feedback')[0];
+
+            providedFeedbackInput.addEventListener('input', updateRemainingFeedback);
+
+            // Initial calculation on page load
+            updateRemainingFeedback();
+
+            function updateRemainingFeedback() {
+                var totalAssessments = parseInt(document.getElementsByName('total_assessments')[0].value, 10);
+                var providedFeedback = parseInt(providedFeedbackInput.value, 10);
+
+                if (!isNaN(totalAssessments) && !isNaN(providedFeedback)) {
+                    var remainingFeedback = totalAssessments - providedFeedback;
+
+                    // Display the calculated remaining feedback
+                    remainingFeedbackInput.value = remainingFeedback;
+                } else {
+                    remainingFeedbackInput.value = ''; // Reset to empty if values are not valid
+                }
+            }
+        });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Your existing script...
+
+            // Add event listener for changes in the active tab
+            $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var activeTabId = $(e.target).attr('href');
+                updateRemainingFeedbackForTab(activeTabId);
+            });
+
+            // Initial calculation on page load
+            updateRemainingFeedbackForActiveTabs();
+
+            function updateRemainingFeedbackForActiveTabs() {
+                $('#customTabs a[data-bs-toggle="tab"]').each(function () {
+                    var tabId = $(this).attr('href');
+                    updateRemainingFeedbackForTab(tabId);
+                });
+            }
+
+            function updateRemainingFeedbackForTab(tabId) {
+                var totalAssessmentsInput = $(tabId).find('input[name="total_assessments"]');
+                var providedFeedbackInput = $(tabId).find('input[name="provided_feedback"]');
+                var remainingFeedbackInput = $(tabId).find('input[name="remaining_feedback"]');
+                var feedbackPerDayInput = $(tabId).find('input[name="feedback_day"]');
+                var remainingDayInput = $(tabId).find('input[name="days_remaining"]');
+                
+
+                totalAssessmentsInput.on('input', function () {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+                });
+
+                providedFeedbackInput.on('input', function () {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+                });
+
+                // Initial calculation on page load
+                updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
+                UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+            }
+
+            function updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput) {
+                var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+
+                if (!isNaN(totalAssessments) && !isNaN(providedFeedback)) {
+                    var remainingFeedback = totalAssessments - providedFeedback;
+
+                    // Display the calculated remaining feedback
+                    remainingFeedbackInput.val(remainingFeedback);
+                } else {
+                    remainingFeedbackInput.val(''); // Reset to empty if values are not valid
+                }
+            }
+
+            function UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput){
+                var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+                var remainingDays = parseInt(remainingDayInput.val(), 10);
+                feedbackPerDay = (totalAssessments-providedFeedback)/remainingDays;
+                if(isNaN(feedbackPerDay)){
+                    feedbackPerDayInput.val(0);
+                }
+                else{
+                    feedbackPerDayInput.val(Math.round(feedbackPerDay));
+                }
+                
+
             }
         });
     </script>
