@@ -211,7 +211,9 @@
                                                     <td>
                                                         {{-- <textarea id ="tutor_comment" name="tutor_comment" class="form-control" style="height: 150px;"></textarea> --}}
                                                         <textarea id="tutor_comment_{{ $topic->id }}" name="tutor_comment" class="form-control" style="height: 150px;"
-                                                            topic-id="{{ $topic->id }}"></textarea>
+                                                            topic-id="{{ $topic->id }}"></textarea>                                                        
+                                                        <textarea id="tutor_comment_hidden_{{ $topic->id }}" name="tutor_hidden_comment" class="form-control" style="height: 150px;"
+                                                            topic-id="{{ $topic->id }}" hidden></textarea>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -269,7 +271,7 @@
                 $(cell).addClass('highlight-text');
                 // Get the value of the clicked cell
                 var cellValue = cell.innerText;
-
+                
                 // Append the value to the tutor comment textarea
                 var textarea = document.getElementById(textareaId);
 
@@ -278,6 +280,19 @@
                 } else {
                     textarea.innerHTML += cellValue + '\n';
                 }
+                
+                //----------------------------------------------------
+                
+                var tutor_comment_hidden = textareaId.replace('tutor_comment_', 'tutor_comment_hidden_')
+                
+                var textarea_hidden = document.getElementById(tutor_comment_hidden);
+
+                if ($(textarea_hidden).val().length == 0) {
+                    textarea_hidden.innerHTML = cellValue + '\n';
+                } else {
+                    textarea_hidden.innerHTML += cellValue + '\n';
+                }
+                
             }
         }
     </script>
@@ -296,10 +311,12 @@
                     var topicId = $(this).data('tid');
                     // alert(topicId);
                     var comment_id = `tutor_comment_${topicId}`;
+                    var comment_hidden_id = `tutor_comment_hidden_${topicId}`;
                     var nameInput = document.getElementById('student_name');
                     var studentIdInput = document.getElementById('student_id');
                     var markInput = document.getElementById('student_mark');
                     var tutorCommentTextarea = document.getElementById(comment_id);
+                    var tutorCommentTextareaHidden = document.getElementById(comment_hidden_id);
 
 
                     var tutor_sign = document.getElementById('tutor_sign');
@@ -319,6 +336,10 @@
                             '"><input type="hidden" name="student_mark" value="' + markInput.value +
                             '"><input type="hidden" name="tutor_comment" value="' +
                             tutorCommentTextarea.value +
+                            '"><input type="hidden" name="tutor_comment_hidden" value="' +
+                            tutorCommentTextareaHidden.value +
+                            '"><input type="hidden" name="topic_id" value="' +
+                            topicId +
                             '"><input type="hidden" name="tutor_sign" value="' + tutor_sign.value +
                             '"><input type="hidden" name="end_date" value="' + end_date.value +
                             '">';
