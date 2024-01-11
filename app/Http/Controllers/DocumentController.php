@@ -15,6 +15,11 @@ class DocumentController extends Controller
     {
         //dd($request->all());        
         $tutor_comment_data = explode("\n", $request->tutor_comment_hidden);
+		
+		$tutor_comment_data_final = array();
+		foreach($tutor_comment_data as $tutor_comment_data_obj){
+			$tutor_comment_data_final[] = self::cleanString($tutor_comment_data_obj);
+		}
         
         try {
             $phpWord = new PhpWord();
@@ -47,35 +52,60 @@ class DocumentController extends Controller
     <td width="110" valign="top"><p align="center">2.2</p></td>
     <td width="110" valign="top"><p align="center">3rd </p></td>
     <td width="111" valign="top"><p align="center">Pass</p></td>
-    <td width="111" valign="top"><p align="center">F+</p></td>
+    <td width="37" valign="top"><p align="center">F+</p></td>
     <td width="37" valign="top"><p align="center">F</p></td>
     <td width="37" valign="top"><p align="center">F-</p></td>
   </tr>
   <tr>
     <td width="58" valign="top"><h1>&nbsp;</h1></td>
-    <td width="120" valign="top"><p align="center">90-100</p></td>
+    <td width="46" valign="top"><p align="center">90-100</p></td>
     <td width="37" valign="top"><p align="center">80-89</p></td>
     <td width="37" valign="top"><p align="center">70-79</p></td>
     <td width="110" valign="top"><p align="center">60-69</p></td>
     <td width="110" valign="top"><p align="center">50-59</p></td>
     <td width="110" valign="top"><p align="center">45-49</p></td>
     <td width="111" valign="top"><p align="center">40-44</p></td>
-    <td width="111" valign="top"><p align="center">35-39</p></td>
+    <td width="37" valign="top"><p align="center">35-39</p></td>
     <td width="37" valign="top"><p align="center">25-34</p></td>
     <td width="37" valign="top"><p align="center">15-24</p></td>
   </tr>';
 
 foreach ($rubrics as $key => $rubric){
-    
+
+$firstbg = "";
+if( in_array(self::cleanString($rubric->first), $tutor_comment_data_final) )
+	$firstbg = ' bgcolor="#ffff99"';
+
+$secondbg = "";
+if( in_array(self::cleanString($rubric->second), $tutor_comment_data_final) )
+	$secondbg = ' bgcolor="#ffff99"';
+	
+$secondtwobg = "";
+if( in_array(self::cleanString($rubric->secondtwo), $tutor_comment_data_final) )
+	$secondtwobg = ' bgcolor="#ffff99"';
+	
+$thirdbg = "";
+if( in_array(self::cleanString($rubric->third), $tutor_comment_data_final) )
+	$thirdbg = ' bgcolor="#ffff99"';
+	
+$passbg = "";
+if( in_array(self::cleanString($rubric->pass), $tutor_comment_data_final) )
+	$passbg = ' bgcolor="#ffff99"';
+	
+$failbg = "";
+if( in_array(self::cleanString($rubric->fail), $tutor_comment_data_final) )
+	$failbg = ' bgcolor="#ffff99"';	
+	
+	
 $htmlContent .= '<tr>';
-        
+	
 $htmlContent .= '<td width="58"><p><strong>'.$rubric->title.'</strong></p></td>';
-$htmlContent .= '<td width="120" colspan="3" valign="top"><p>'.$rubric->first.'</p></td>';
-$htmlContent .= '<td width="110" valign="top"><p>'.$rubric->second.'</p></td>';
-$htmlContent .= '<td width="110" valign="top"><p>'.$rubric->secondtwo.'</p></td>'; // bgcolor="#090CAC"
-$htmlContent .= '<td width="110" valign="top"><p>'.$rubric->third.'</p></td>';
-$htmlContent .= '<td width="111" valign="top"><p>'.$rubric->pass.'</p></td>';
-$htmlContent .= '<td width="111" colspan="3" valign="top"><p>'.$rubric->fail.'</p></td>';
+$htmlContent .= '<td width="120" colspan="3" valign="top"'.$firstbg.'><p>'.$rubric->first.'</p></td>';
+$htmlContent .= '<td width="110" valign="top"'.$secondbg.'><p>'.$rubric->second.'</p></td>';
+$htmlContent .= '<td width="110" valign="top"'.$secondtwobg.'><p>'.$rubric->secondtwo.'</p></td>'; // 
+$htmlContent .= '<td width="110" valign="top"'.$thirdbg.'><p>'.$rubric->third.'</p></td>';
+$htmlContent .= '<td width="111" valign="top"'.$passbg.'><p>'.$rubric->pass.'</p></td>';
+$htmlContent .= '<td width="111" colspan="3" valign="top"'.$failbg.'><p>'.$rubric->fail.'</p></td>';
     
 $htmlContent .= '</tr>';
 
@@ -92,16 +122,14 @@ $htmlContent .= '<tr>
             //$section = $phpWord->addSection();
 
             $table = array('borderColor'=>'black', 'borderSize'=> 5, 'cellMargin'=>50, 'valign'=>'center');
-        $phpWord->addTableStyle('table', $table);
+        	$phpWord->addTableStyle('table', $table);
             
-$section = $phpWord->addSection(array(
-                                    'marginLeft' => 230, 
-                                    'marginRight' => 300, 
-                                    'marginTop' => 600, 
-                                    'marginBottom' => 600)
-                               );
-            
-
+			$section = $phpWord->addSection(array(
+												'marginLeft' => 230, 
+												'marginRight' => 300, 
+												'marginTop' => 600, 
+												'marginBottom' => 600)
+										   );
             
             
             \PhpOffice\PhpWord\Shared\Html::addHtml($section, $htmlContent, false, false);
@@ -132,9 +160,10 @@ $section = $phpWord->addSection(array(
         return $newTempFile;
     }
     
-    private function cleanDB($text)
+    private function cleanString($text)
     {
-        $text = str_replace("<br>", "", $text);
+        $text = str_replace(" ", "", $text);
+		$text = str_replace(array("\r", "\n"), "", $text);
         return $text;
     }
     

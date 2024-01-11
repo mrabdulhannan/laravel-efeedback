@@ -164,35 +164,35 @@
 
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')" data-content="{{ $rubric->first }}">
 
                                                                 <div>
                                                                     {{ $rubric->first }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')"  data-content="{{ $rubric->second }}">
 
                                                                 <div>
                                                                     {{ $rubric->second }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')"  data-content="{{ $rubric->secondtwo }}">
 
                                                                 <div>
                                                                     {{ $rubric->secondtwo }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')"  data-content="{{ $rubric->third }}">
                                                                 <div>{{ $rubric->third }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')"  data-content="{{ $rubric->pass }}">
 
                                                                 <div>
                                                                     {{ $rubric->pass }}</div>
                                                             </td>
                                                             <td contenteditable="false" class="pointer-css"
-                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')">
+                                                                onclick="highlightAndAppend(this, 'tutor_comment_{{ $topic->id }}')"  data-content="{{ $rubric->fail }}">
 
                                                                 <div>
                                                                     {{ $rubric->fail }}</div>
@@ -286,13 +286,23 @@
                 var tutor_comment_hidden = textareaId.replace('tutor_comment_', 'tutor_comment_hidden_')
                 
                 var textarea_hidden = document.getElementById(tutor_comment_hidden);
+				textarea_hidden.innerHTML = "";
 
-                if ($(textarea_hidden).val().length == 0) {
+                /*if ($(textarea_hidden).val().length == 0) {
                     textarea_hidden.innerHTML = cellValue + '\n';
                 } else {
                     textarea_hidden.innerHTML += cellValue + '\n';
-                }
-                
+                }*/
+				
+				//----------------------------------------------------
+				
+				var highlightedInputs = $('#customTabContent table td.highlight-text');
+				var inputValues = [];
+				highlightedInputs.each(function () {
+					//inputValues.push($(this).data('content'));
+					textarea_hidden.innerHTML += $(this).data('content') + '\n';
+				});
+				
             }
         }
     </script>

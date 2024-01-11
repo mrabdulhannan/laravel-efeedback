@@ -35,7 +35,10 @@
                                                                 $categoryCount = Auth::user()
                                                                     ->definecategories->where('topic_id', $topic->id)
                                                                     ->count();
+
                                                             @endphp
+                                                            <input type="hidden" value="{{ $topic->id }}"
+                                                                id="current_topic_id" name="current_topic_id" />
                                                             @if ($categoryCount > 0)
                                                                 {{-- <span class="badge bg-info">{{ $categoryCount }}</span> --}}
                                                             @endif
@@ -61,6 +64,7 @@
                                                             method="post">
                                                             @csrf
                                                             @method('patch')
+
 
                                                             <table class="table">
                                                                 <tr>
@@ -111,16 +115,27 @@
                                                                             readonly />
                                                                     </td>
                                                                 </tr>
+                                                                
+
+
 
                                                                 <tr>
                                                                     <th width="250" valign="middle">Feedback/Day
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="feedback_day"
-                                                                            value="{{ ($topic->total_assessments - $topic->provided_feedback) }}"
+                                                                            value="{{ $topic->total_assessments - $topic->provided_feedback }}"
                                                                             readonly />
                                                                     </td>
                                                                 </tr>
+
+                                                                <tr>
+                                                                    <td colspan="5">
+                                                                        <div id="tab-{{ $topic->id }}-chart" class="chart-class"></div>
+                                                                    </td>
+                                                                </tr>
+
+                                                                
                                                             </table>
 
                                                             <button type="submit" class="btn btn-primary">Update</button>
@@ -152,7 +167,6 @@
 <!-- Your existing script tag... -->
 @push('script-page-level')
     <script>
-        $
         document.addEventListener('DOMContentLoaded', function() {
             var startDateInput = document.getElementsByName('start_date')[0];
             var endDateInput = document.getElementsByName('end_date')[0];
@@ -222,12 +236,39 @@
         });
     </script> --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // alert(activeTabId);
+        // $(document).ready(function() {
+        //     var topicId = $('#current_topic_id').val();
+        //     var totalAssessmentsInput = $(topicId).find('input[name="total_assessments"]');
+        //     var providedFeedbackInput = $(topicId).find('input[name="provided_feedback"]');
+        //     var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+        //     if(isNaN(totalAssessments)){
+        //         totalAssessments = 0;
+        //     }
+        //     var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+        //     if(isNaN(providedFeedback)){
+        //         providedFeedback = 0;
+        //     }
+        //     var remaining_feedback = totalAssessments - providedFeedback;
+
+        //     var currentTopicId = 'chart-' + $('#current_topic_id')
+        //         .val(); // Assuming current_topic_id is an input field
+        //     alert(JSON.stringify(currentTopicId));
+
+
+
+        // });
+
+        document.addEventListener('DOMContentLoaded', function() {
+
             // Your existing script...
 
             // Add event listener for changes in the active tab
-            $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+
                 var activeTabId = $(e.target).attr('href');
+
+
                 updateRemainingFeedbackForTab(activeTabId);
             });
 
@@ -235,33 +276,93 @@
             updateRemainingFeedbackForActiveTabs();
 
             function updateRemainingFeedbackForActiveTabs() {
-                $('#customTabs a[data-bs-toggle="tab"]').each(function () {
+                $('#customTabs a[data-bs-toggle="tab"]').each(function() {
                     var tabId = $(this).attr('href');
                     updateRemainingFeedbackForTab(tabId);
+                    var totalAssessmentsInput = $(tabId).find('input[name="total_assessments"]');
+                    var providedFeedbackInput = $(tabId).find('input[name="provided_feedback"]');
+                    var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                    var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+                    
+
+                    DrawChart(totalAssessments, providedFeedback, tabId);
+
+                    function DrawChart(totalAssessments, providedFeedback, tabId) {
+                        var currentTopicId = tabId+'-chart';
+                        // alert(currentTopicId);
+
+                        var remainingFeedback = totalAssessments - providedFeedback;
+                        var options = {
+                            series: [remainingFeedback, providedFeedback ],
+                            labels: ['Reamining Feedback', 'Provided Feedback'],
+                            chart: {
+                                type: 'donut',
+                            },
+                            responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                        width: 200
+                                    },
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }]
+                        };
+
+                        // Make sure the container with id `chart-${currentTopicId}` exists in your HTML
+                        var chart = new ApexCharts(document.querySelector(currentTopicId), options);
+                        chart.render();
+                    }
+
                 });
+
+
             }
 
+
+
             function updateRemainingFeedbackForTab(tabId) {
+
                 var totalAssessmentsInput = $(tabId).find('input[name="total_assessments"]');
                 var providedFeedbackInput = $(tabId).find('input[name="provided_feedback"]');
                 var remainingFeedbackInput = $(tabId).find('input[name="remaining_feedback"]');
                 var feedbackPerDayInput = $(tabId).find('input[name="feedback_day"]');
                 var remainingDayInput = $(tabId).find('input[name="days_remaining"]');
-                
 
-                totalAssessmentsInput.on('input', function () {
-                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
-                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+
+                totalAssessmentsInput.on('input', function() {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput,
+                        remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput, feedbackPerDayInput,
+                        remainingDayInput, feedbackPerDayInput);
+                        DrawChart(totalAssessments, providedFeedback, tabId);
                 });
 
-                providedFeedbackInput.on('input', function () {
-                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
-                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+                providedFeedbackInput.on('input', function() {
+                    updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput,
+                        remainingFeedbackInput);
+                    UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput, feedbackPerDayInput,
+                        remainingDayInput, feedbackPerDayInput);
+                        DrawChart(totalAssessments, providedFeedback, tabId);
                 });
 
                 // Initial calculation on page load
                 updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput);
-                UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput);
+                UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput, feedbackPerDayInput,
+                    remainingDayInput, feedbackPerDayInput);
+                var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
+                if (isNaN(totalAssessments)) {
+                    totalAssessments = 100;
+                }
+                var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
+                if (isNaN(providedFeedback)) {
+                    providedFeedback = 65;
+                }
+
+
+
             }
 
             function updateRemainingFeedback(totalAssessmentsInput, providedFeedbackInput, remainingFeedbackInput) {
@@ -276,22 +377,39 @@
                 } else {
                     remainingFeedbackInput.val(''); // Reset to empty if values are not valid
                 }
+
             }
 
-            function UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput,feedbackPerDayInput,remainingDayInput, feedbackPerDayInput){
+            function UpdateFeedbackPerDay(totalAssessmentsInput, providedFeedbackInput, feedbackPerDayInput,
+                remainingDayInput, feedbackPerDayInput) {
                 var totalAssessments = parseInt(totalAssessmentsInput.val(), 10);
                 var providedFeedback = parseInt(providedFeedbackInput.val(), 10);
                 var remainingDays = parseInt(remainingDayInput.val(), 10);
-                feedbackPerDay = (totalAssessments-providedFeedback)/remainingDays;
-                if(isNaN(feedbackPerDay)){
+                feedbackPerDay = (totalAssessments - providedFeedback) / remainingDays;
+
+                if (isNaN(feedbackPerDay)) {
                     feedbackPerDayInput.val(0);
-                }
-                else{
+                } else {
                     feedbackPerDayInput.val(Math.round(feedbackPerDay));
                 }
-                
 
             }
+
+
         });
     </script>
 @endpush
+
+<div>
+    <style>
+        .chart-class {
+            max-width: 380px;
+            margin: 35px auto;
+            padding: 0;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+
+</div>
