@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DocumentController;
 
 
 /*
@@ -19,11 +20,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/rubrics', function () {
+//     return view('admin.rubrics');
+// });
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/definecategories', [App\Http\Controllers\CategoriesController::class, 'create'])->name('definecategories');
+Route::get('/definecategories/{id}', [App\Http\Controllers\CategoriesController::class, 'create'])->name('definecategories');
 
 Route::post('/storecategories', [App\Http\Controllers\CategoriesController::class, 'store'])->name('storecategories');
 
@@ -59,9 +64,18 @@ Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::cl
 // Topics Relevent Routes
 Route::get('/definetopic', [App\Http\Controllers\TopicsController::class, 'create'])->name('definetopic');
 Route::post('/storetopic', [App\Http\Controllers\TopicsController::class, 'store'])->name('storetopic');
-Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopic'])->name('updatetopic');
 Route::patch('/updatetopic/{topicId}', [App\Http\Controllers\TopicsController::class, 'updatetopicpost'])->name('updatetopicpost');
 Route::post('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.post');
 Route::get('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.get');
 Route::get('/alltopics', [App\Http\Controllers\TopicsController::class, 'showalltopics'])->name('alltopics');
 Route::delete('/deletetopic/{id}', [App\Http\Controllers\TopicsController::class, 'deletetopic'])->name('deletetopic');
+
+
+//Rubrics Relevent Routes
+Route::get('/rubrics', [App\Http\Controllers\RubricsController::class, 'create'])->name('rubrics');
+Route::get('/tutorialpresentation', [App\Http\Controllers\RubricsController::class, 'tutorialpresentation'])->name('tutorialpresentation');
+Route::post('/storerubrics', [App\Http\Controllers\RubricsController::class, 'store'])->name('storerubrics');
+Route::put('/updaterubrics/{id}', [App\Http\Controllers\RubricsController::class, 'updaterubrics'])->name('updaterubrics');
+Route::delete('/deleteRubric/{id}', [App\Http\Controllers\RubricsController::class, 'deleteRubric'])->name('deleteRubric');
+// Route::get('/generate-word-document', [DocumentController::class, 'generateWordDocument']);
+Route::post('/sendDataToController', [App\Http\Controllers\DocumentController::class, 'generateWordDocument'])->name('sendDataToController');

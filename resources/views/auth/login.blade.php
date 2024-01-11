@@ -31,9 +31,7 @@
                 <div class="mb-3">
                     <div class="d-flex justify-content-between">
                     <label for="password" class="form-label">{{ __('Password') }}</label>
-                    @if (Route::has('password.request'))
-                    <a href="{{ route('forgetpassword') }}" class="btn-link ml-auto">Forgot password?</a>
-                    @endif
+                   
                     </div>
                     <div class="">
                         
@@ -50,17 +48,21 @@
                 </div>
 
                 <div class="mb-3">
-                    <div class=" offset-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                                {{ old('remember') ? 'checked' : '' }}>
-
-                            <label class="form-check-label" for="remember">
+                    <div class="">
+                        <div class="form-check d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label mr-3" for="remember">
                                 {{ __('Remember Me') }}
                             </label>
+                            @if (Route::has('password.request'))
+                            <a style="padding-left:100px" href="{{ route('forgetpassword') }}" class="btn-link">Forgot password?</a>
+                            @endif
                         </div>
                     </div>
                 </div>
+                
+                
+                
 
                 <div class="login-form-actions">
                     <button type="submit" class="btn"> <span class="icon"> <i

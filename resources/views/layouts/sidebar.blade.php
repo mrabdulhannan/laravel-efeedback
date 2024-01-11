@@ -1,5 +1,5 @@
 <!-- Sidebar wrapper start -->
-<nav class="sidebar-wrapper">
+<nav class="sidebar-wrapper" style="display: none">
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
         <a href="{{ route('home') }}" class="logo">
@@ -8,7 +8,7 @@
     </div>
     <!-- Sidebar brand starts -->
     <!-- Sidebar menu starts -->
-    <div class="sidebar-menu">
+    <div class="sidebar-menu" >
         <div class="sidebarMenuScroll">
             <ul>
                 <li class="active">
@@ -24,9 +24,9 @@
                     </a>
                     <div class="sidebar-submenu">
                         <ul>
-                            <li>
+                            {{-- <li>
                                 <a href="{{route('definecategories')}}">Define Categories</a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="{{route('mycategories')}}">My Categories</a>
                             </li>

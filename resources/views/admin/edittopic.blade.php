@@ -10,6 +10,15 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <!-- Content wrapper start -->
         <div class="content-wrapper">
 
@@ -18,9 +27,15 @@
                 <div class="col-xxl-12">
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="card-title">Update Category</h2>
+                            <h2 class="card-title">Update Feedback</h2>
                             <form action="{{ route('updatetopicpost', ['topicId' => $topic->id]) }}" method="post">
                                 @csrf
+                                @php
+                                    // Count the categories for the current topic
+                                    $categoryCount = Auth::user()
+                                        ->definecategories->where('topic_id', $topic->id)
+                                        ->count();
+                                @endphp
                                 @method('patch')
                                 <!-- Title Input -->
                                 <div class="mb-3">
@@ -30,11 +45,11 @@
                                 </div>
 
                                 <!-- Description Textarea -->
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label for="groups" class="form-label">Goups (Must be "," separated)</label>
                                     <input type="text" class="form-control" id="groups" name="groups" rows="4"
                                         value="{{ $topic->groups }}" />
-                                </div>
+                                </div> --}}
 
                                 <table class="table">
                                     <tr>
@@ -58,9 +73,21 @@
                                                 value="6" /></td>
                                     </tr>
                                     <tr>
-                                        <th width="250" valign="middle">Provided feedback</th>
-                                        <td><input type="text" class="form-control" name="provided_feedback"
-                                                value="{{ count(Auth::user()->definecategories) }}" /></td>
+                                        <th width="250" valign="middle">Provided feedback
+                                        </th>
+                                        <td><input type="text" class="form-control"
+                                                name="provided_feedback"
+                                                value="{{$topic->provided_feedback}}" />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="250" valign="middle">Remaining feedback
+                                        </th>
+                                        <td><input type="text" class="form-control"
+                                                name="remaining_feedback"
+                                                value="{{  $topic->total_assessments - $topic->provided_feedback  }}" readonly />
+                                        </td>
                                     </tr>
                                 </table>
                                 <!-- Save Button -->
