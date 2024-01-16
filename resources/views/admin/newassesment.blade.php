@@ -32,6 +32,18 @@
             content: '' !important;
         }
         .subcat-items label{word-break: break-all;}
+        div#selectedItemData {
+            position: sticky;
+            top: 5px;
+        }
+        .insert-button-class {
+            cursor: pointer;
+            padding: 5px; /* Add padding for better visibility */
+        }
+
+        .alert-class {
+            background-color: red; /* Set the background color for the active state */
+        }
     </style>
 @endpush
 
@@ -118,12 +130,12 @@
                                                                                 class="category-title">{{ $category->title }}</span>
                                                                             </button>
                                                                             
-                                                                            <div class="description d-none">
-                                                                                <label class="d-flex0 p-3">
+                                                                            <div class="description d-none ">
+                                                                                <label class="d-flex0 p-3 ">
                                                                                 {{ $category->description }} <input
                                                                                     type="checkbox"
-                                                                                    class="me-2 ms-3 chk sub-checkbox"
-                                                                                    data-category-id="{{ $category->id }}" /><span class="px-3 py-1 text-white bg-success">insert</span>
+                                                                                    class="me-2 ms-3 chk sub-checkbox d-none"
+                                                                                    data-category-id="{{ $category->id }}" /><span onclick="toggleTextWithIcon(this)" class="px-3 py-1 text-white bg-success insert-button-class rounded" style="cursor: pointer;">insert <i class="bi bi-arrow-right"></i></span>
                                                                                 </label>    
                                                                             </div>
                                                                         </li>
@@ -171,7 +183,7 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="{{route('newassesment')}}" class="btn btn-secondary">Reset</a>
+                        <a href="{{route('newassesment')}}" class="btn btn-danger">Reset</a>
                         <button id="btnCopyText" class="btn btn-success">Copy Text</button>
                     </div>
                 </div>
@@ -183,7 +195,27 @@
     @push('script-page-level')
         <script src="{{ asset('assets/tinymce/tinymce.min.js') }}"></script>
         <script>
+                var spanElement = document.querySelector('.insert-button-class');
+                function toggleTextWithIcon(spanElement) {
+                    // Check the current state
+                    if (spanElement.classList.contains('active')) {
+                        // Toggle to the first state
+                        spanElement.innerHTML = 'insert <i class="bi bi-arrow-right"></i>';
+                        spanElement.classList.remove('active');
+                        spanElement.classList.remove('bg-danger');
+                        
+                        
+                    } else {
+                        // Toggle to the second state
+                        spanElement.innerHTML = '<i class="bi bi-arrow-left"></i> Remove';
+                        spanElement.classList.add('active');
+                        spanElement.classList.add('bg-danger');
+                        // spanElement.classList.remove('bg-success');
+                        
+                    }
+                }
             $(document).ready(function() {
+                
                 const selectedItemData = $('#selectedItemData');
                 const selectedItems = new Set();
                 const newlyAddedItems = new Set(); // Track newly added items
@@ -310,6 +342,9 @@
                     return descriptionHTML;
                 }
 
+                
+
+                
 
                 // Attach click event to entire list items
                 function setupClickEvent(topicId) {
@@ -318,17 +353,19 @@
                     itemList.on('click', 'li .sub-checkbox', function() {
 
                         const categoryId = $(this).data('category-id');
+                        
+                        
 
                         $(this).toggleClass('selected2');
 
                         if ($(this).is(':checked')) {
+                            
                             selectedItems.add(categoryId);
                             newlyAddedItems.delete(categoryId); // Remove from newly added items
                         } else {
                             selectedItems.delete(categoryId);
                         }
 
-                        //$(this).toggleClass('selected');
 
                         // Render selected items' data in the main content area
                         renderSelectedItemsData();

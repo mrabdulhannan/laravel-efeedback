@@ -403,7 +403,7 @@
 <div>
     <style>
         .chart-class {
-            max-width: 380px;
+            max-width: 500px;
             margin: 35px auto;
             padding: 0;
         }

@@ -83,3 +83,12 @@
     </form>
     <!-- Login box end -->
 </div>
+<style>
+    input#password {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+    }
+
+    input#email {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+    }
+</style>
