@@ -5875,20 +5875,21 @@ fieldset:disabled .btn-white {
   font-size: .9rem;
   min-height: 40px;
   background-color: #ffffff;
+  box-shadow: 0 0 5pt 0.5pt #D3D3D3;
 }
 
 .form-control:hover {
   border: 1px solid #9ba5b3;
 }
 
-.form-control:focus {
+/* .form-control:focus {
   border-color: #9ba5b3;
   -webkit-box-shadow: none;
           box-shadow: none;
   border-radius: 2px;
   outline: 0 !important;
   outline-color: #9ba5b3 !important;
-}
+} */
 
 .form-control:disabled {
   opacity: .7;

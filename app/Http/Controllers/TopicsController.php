@@ -130,4 +130,22 @@ class TopicsController extends Controller
 
         return redirect()->route('alltopics')->with('success', 'Category deleted successfully');
     }
+
+public function updateOrder(Request $request)
+{
+    try {
+        $order = $request->input('order');
+
+        // Update the order of topics in the database
+        foreach ($order as $index => $topicId) {
+            Topics::where('id', $topicId)->update(['topic_order' => $index + 1]);
+        }
+    
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        \Log::error($e->getMessage());
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
+}
+
 }

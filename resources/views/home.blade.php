@@ -1,5 +1,60 @@
 @extends('layouts.app')
 
+@push('stylesheet-page-level')
+    <style>
+      .custom-tabs-container .nav-tabs li:nth-child(1) .nav-link.active{
+border-color: transparent #dc3545;
+box-shadow: 0 -6px 0 0 #dc3545;
+color: #dc3545;
+}
+.custom-tabs-container .nav-tabs li:nth-child(2) .nav-link.active{
+border-color: transparent #28a745;
+box-shadow: 0 -6px 0 0 #28a745;
+color: #28a745;
+}
+.custom-tabs-container .nav-tabs li:nth-child(3) .nav-link.active{
+border-color: transparent #ff851b;
+box-shadow: 0 -6px 0 0 #ff851b;
+color: #ff851b;
+}
+.custom-tabs-container .nav-tabs li:nth-child(4) .nav-link.active{
+border-color: transparent #007bff;
+box-shadow: 0 -6px 0 0 #007bff;
+color: #007bff;
+}
+.custom-tabs-container .nav-tabs li:nth-child(5) .nav-link.active{
+border-color: transparent #6610f2;
+box-shadow: 0 -6px 0 0 #6610f2;
+color: #6610f2;
+}
+.custom-tabs-container .nav-tabs li:nth-child(6) .nav-link.active{
+border-color: transparent #3d9970;
+box-shadow: 0 -6px 0 0 #3d9970;
+color: #3d9970;
+}
+.custom-tabs-container .nav-tabs li:nth-child(7) .nav-link.active{
+border-color: transparent #3c8dbc;
+box-shadow: 0 -6px 0 0 #3c8dbc;
+color: #3c8dbc;
+}
+.custom-tabs-container .nav-tabs li:nth-child(8) .nav-link.active{
+border-color: transparent #001f3f;
+box-shadow: 0 -6px 0 0 #001f3f;
+color: #001f3f;
+}
+.custom-tabs-container .nav-tabs li:nth-child(9) .nav-link.active{
+border-color: transparent #17a2b8;
+box-shadow: 0 -6px 0 0 #17a2b8;
+color: #17a2b8;
+}
+.custom-tabs-container .nav-tabs li:nth-child(10) .nav-link.active{
+border-color: transparent #f012be;
+box-shadow: 0 -6px 0 0 #f012be;
+color: #f012be;
+}
+.navbar-nav{gap: 5px;}
+    </style>
+@endpush
 @section('content')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -120,7 +175,7 @@
 
 
                                                                 <tr>
-                                                                    <th width="250" valign="middle">Feedback/Day
+                                                                    <th width="250" valign="middle">Feedback required per day to meet target
                                                                     </th>
                                                                     <td><input type="text" class="form-control"
                                                                             name="feedback_day"

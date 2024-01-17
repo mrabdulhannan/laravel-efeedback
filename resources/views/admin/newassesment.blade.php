@@ -1,11 +1,15 @@
 @extends('layouts.app')
 
+
 @push('stylesheet-page-level')
     <style>
         .list-group-item.selected2 {
             background-color: #007bff;
             color: white;
         }
+        .insert-button-class {
+    float: right;
+}
 
         .accordion-button {
             padding-left: 50px !important;
@@ -186,6 +190,9 @@
     @push('script-page-level')
         <script src="{{ asset('assets/tinymce/tinymce.min.js') }}"></script>
         <script>
+            $(window).on('load', function() {
+                $("#customTabs .tab-active").trigger('click');
+            })
             var spanElement = document.querySelector('.insert-button-class');
 
             function toggleTextWithIcon(spanElement) {
@@ -219,10 +226,13 @@
                 function initializeTinyMCE(elementId) {
                     tinymce.init({
                         selector: `#${elementId}`,
-                        plugins: ['link'],
+                        plugins: ['link', 'autoresize'],
                         toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link',
                         branding: false,
                         menubar: false,
+                        autoresize_bottom_margin: 16, // Optional: Specify the bottom margin
+                        autoresize_max_height: 500, // Optional: Specify the maximum height
+                        autoresize_min_height: 100,
                     });
                 }
 
@@ -259,7 +269,7 @@
                         const selectedItem = items.find(item => item.id === itemId);
                         if (selectedItem) {
                             /*const elementId = `description_${selectedItem.id}`;
-                                                                        selectedItemData.append(`
+                                                                                selectedItemData.append(`
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
