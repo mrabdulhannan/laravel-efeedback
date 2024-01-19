@@ -47,7 +47,9 @@ class User extends Authenticatable
     }
 
     public function definetopic(){
-        return $this->hasMany(Topics::class)->orderBy('created_at', 'DESC');
+        // return $this->hasMany(Topics::class)->orderBy('created_at', 'DESC');
+        // return $this->hasMany(Topics::class)->orderBy('created_at', 'DESC');
+        return $this->hasMany(Topics::class)->orderBy('topic_order', 'ASC');
     }
 
     public function definerubrics(){
