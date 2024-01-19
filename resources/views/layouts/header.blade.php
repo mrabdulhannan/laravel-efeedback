@@ -179,7 +179,7 @@
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                             <div class="header-profile-actions">
-                                <a href="{{ route('updatepassword') }}">Update Password</a>
+                                <a href="{{ route('updatepassword') }}">My Profile</a>
                                 <a href="{{ route('logout') }}"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
