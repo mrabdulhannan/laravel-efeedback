@@ -104,15 +104,15 @@
                                                 <tr id="studentInfo">
                                                     <th width="150" valign="middle">Name:
                                                     </th>
-                                                    <td><input type="text" id="student_name" name="student_name"
+                                                    <td><input type="text" id="student_name_{{ $topic->id }}" name="student_name"
                                                             class="form-control" /></td>
                                                     <th width="150" valign="middle">Student ID:
                                                     </th>
-                                                    <td><input type="text" id="student_id" name="student_id"
+                                                    <td><input type="text" id="student_id_{{ $topic->id }}" name="student_id"
                                                             class="form-control" /></td>
                                                     <th width="150" valign="middle">Mark
                                                     </th>
-                                                    <td><input type="text" id="student_mark" name="student_mark"
+                                                    <td><input type="text" id="student_mark_{{ $topic->id }}" name="student_mark"
                                                             class="form-control" /></td>
                                                 </tr>
                                             </table>
@@ -198,7 +198,6 @@
                                                                     {{ $rubric->fail }}</div>
                                                             </td>
 
-
                                                         </tr>
                                                     </form>
                                                 @endforeach
@@ -211,7 +210,10 @@
                                                     <td>
                                                         {{-- <textarea id ="tutor_comment" name="tutor_comment" class="form-control" style="height: 150px;"></textarea> --}}
                                                         <textarea id="tutor_comment_{{ $topic->id }}" name="tutor_comment" class="form-control" style="height: 150px;"
-                                                            topic-id="{{ $topic->id }}"></textarea>                                                        
+                                                            topic-id="{{ $topic->id }}"></textarea>
+														
+														<a class="btn btn-danger btn-sm" onClick="document.getElementById('tutor_comment_{{ $topic->id }}').innerHTML=''" style="margin-top: 10px;padding: .25rem .5rem; font-size: .875rem; line-height: 1.5; border-radius: .2rem;">Delete Text</a>
+														
                                                         <textarea id="tutor_comment_hidden_{{ $topic->id }}" name="tutor_hidden_comment" class="form-control" style="height: 150px;"
                                                             topic-id="{{ $topic->id }}" hidden></textarea>
                                                     </td>
@@ -221,11 +223,11 @@
                                                 <tr id="tutorSign">
                                                     <th width="150" valign="middle">Tutor Signature
                                                     </th>
-                                                    <td><input type="text" id="tutor_sign" name="tutor_sign"
+                                                    <td><input type="text" id="tutor_sign_{{ $topic->id }}" name="tutor_sign"
                                                             class="form-control" value="{{ Auth::user()->name }}" /></td>
                                                     <th width="150" valign="middle">Date
                                                     </th>
-                                                    <td><input type="date" class="form-control" id="end_date"
+                                                    <td><input type="date" class="form-control" id="end_date_{{ $topic->id }}"
                                                             name="end_date" value="{{ now()->format('Y-m-d') }}"></td>
                                                 </tr>
                                             </table>
@@ -322,15 +324,15 @@
                     // alert(topicId);
                     var comment_id = `tutor_comment_${topicId}`;
                     var comment_hidden_id = `tutor_comment_hidden_${topicId}`;
-                    var nameInput = document.getElementById('student_name');
-                    var studentIdInput = document.getElementById('student_id');
-                    var markInput = document.getElementById('student_mark');
+					
+                    var nameInput = document.getElementById(`student_name_${topicId}`);
+                    var studentIdInput = document.getElementById(`student_id_${topicId}`);
+                    var markInput = document.getElementById(`student_mark_${topicId}`);
                     var tutorCommentTextarea = document.getElementById(comment_id);
                     var tutorCommentTextareaHidden = document.getElementById(comment_hidden_id);
 
-
-                    var tutor_sign = document.getElementById('tutor_sign');
-                    var end_date = document.getElementById('end_date');
+                    var tutor_sign = document.getElementById(`tutor_sign_${topicId}`);
+                    var end_date = document.getElementById(`end_date_${topicId}`);
 
                     var alldata = document.getElementById('alldataId');
 
@@ -392,7 +394,6 @@
             function initializeTabFunctions(tabId) {
 
             }
-
 
         });
 

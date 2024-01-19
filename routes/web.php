@@ -69,6 +69,7 @@ Route::post('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'e
 Route::get('/edittopic/{id}', [App\Http\Controllers\TopicsController::class, 'edittopic'])->name('edittopic.get');
 Route::get('/alltopics', [App\Http\Controllers\TopicsController::class, 'showalltopics'])->name('alltopics');
 Route::delete('/deletetopic/{id}', [App\Http\Controllers\TopicsController::class, 'deletetopic'])->name('deletetopic');
+Route::post('/update-order', [App\Http\Controllers\TopicsController::class, 'updateOrder'])->name('updateOrder');
 
 
 //Rubrics Relevent Routes

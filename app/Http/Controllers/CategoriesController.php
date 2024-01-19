@@ -77,7 +77,7 @@ class CategoriesController extends Controller
         $appendedData =$request['appendedGroup'];
       
         foreach ($appendedData as $group) {
-            $groupTitle = $group[0]??"NA"; 
+            $groupTitle = $group[0]??""; 
         
             // Insert or use the group title in the database here
         
@@ -88,9 +88,9 @@ class CategoriesController extends Controller
                 // Assuming $descriptions and $titles have the same length
                 $description = $descriptions[$index];
                 $mainCategoryData = [
-                        'title' => $title??"NA",
-                        'description' => $description??"NA",
-                        'group' => $groupTitle??"NA",
+                        'title' => $title??"",
+                        'description' => $description??"",
+                        'group' => $groupTitle??"",
                         'topic_id' => $topicId,
                     ];
                     auth()->user()->definecategories()->create($mainCategoryData);
@@ -169,10 +169,10 @@ class CategoriesController extends Controller
         $category = DefineCategories::findOrFail($id);
 
         $category->update([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'group' => $request->input('group'),
-            'topic_id'=>$request->input('topic'),
+            'title' => $request->input('title')??"",
+            'description' => $request->input('description')??"",
+            'group' => $request->input('group')??"",
+            'topic_id'=>$request->input('topic')??"",
         ]);
 
         return redirect()->route('mycategories')->with('success', 'Category updated successfully');
