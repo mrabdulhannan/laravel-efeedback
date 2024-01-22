@@ -172,7 +172,8 @@
                                 @endauth
                             </span>
                             <span class="avatar">
-                                <img src="{{ asset('assets/img') }}/user.png" alt="User Avatar">
+                                <img src="{{ asset('storage/' . auth()->user()->profile_image) }}" alt="Profile Image">
+                                {{-- <img src="{{ asset('assets/img') }}/user.png" alt="User Avatar"> --}}
                                 <span class="status online"></span>
                             </span>
                         </a>
