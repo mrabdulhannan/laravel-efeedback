@@ -80,3 +80,9 @@ Route::put('/updaterubrics/{id}', [App\Http\Controllers\RubricsController::class
 Route::delete('/deleteRubric/{id}', [App\Http\Controllers\RubricsController::class, 'deleteRubric'])->name('deleteRubric');
 // Route::get('/generate-word-document', [DocumentController::class, 'generateWordDocument']);
 Route::post('/sendDataToController', [App\Http\Controllers\DocumentController::class, 'generateWordDocument'])->name('sendDataToController');
+
+//Resources Routes
+Route::get('/files', [App\Http\Controllers\ResourceController::class, 'index'])->name('file.index');
+Route::get('/showallfiles', [App\Http\Controllers\ResourceController::class, 'showallfiles'])->name('showallfiles');
+Route::post('/files', [App\Http\Controllers\ResourceController::class, 'store'])->name('file.store');
+Route::delete('/files/{id}/{filename}', [App\Http\Controllers\ResourceController::class, 'destroy'])->name('file.destroy');
