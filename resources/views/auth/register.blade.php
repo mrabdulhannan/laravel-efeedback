@@ -1,5 +1,7 @@
 <head>
     <script type="module" crossorigin src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
     <!-- Animated css -->
     <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
@@ -7,9 +9,13 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <!-- Bootstrap font icons css -->
     <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap/bootstrap-icons.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap/bootstrap-icons.css') }}">
+
+
 </head>
 <div class="login-container">
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
         <div class="login-box">
             <div class="login-form">
@@ -67,6 +73,15 @@
                             required autocomplete="new-password">
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="profile_image" class="form-label text-md-right">Profile Image</label>
+                    <div class="">
+                        <input id="profile_image" type="file" class="form-control" name="profile_image">
+                    </div>
+                    
+                </div>
+                
 
 				<div class="login-form-actions">
                     <button type="submit" class="btn"> <span class="icon"> <i

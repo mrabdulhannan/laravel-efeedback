@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_image',
     ];
 
     /**
@@ -54,5 +55,9 @@ class User extends Authenticatable
 
     public function definerubrics(){
         return $this->hasMany(Rubrics::class)->orderBy('created_at', 'ASC');
+    }
+
+    public function resources(){
+        return $this->hasMany(Resource::class)->orderBy('created_at', 'DESC');
     }
 }
