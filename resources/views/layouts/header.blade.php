@@ -153,6 +153,17 @@
                         <li><a class="dropdown-item" href="{{ route('tutorialpresentation') }}">Tutorial Presentation</a></li>
                     </ul>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{ route('file.index') }}" id="rubricsLink"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Resources
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="assessmentsLink">
+                        <li><a class="dropdown-item" href="{{ route('file.index') }}">Add Resources</a></li>
+                        <li><a class="dropdown-item" href="{{ route('showallfiles') }}">All Resources</a></li>
+                    </ul>
+                </li>
             </ul>
             <div class="header-actions-container">
                 <!-- Header actions start -->
