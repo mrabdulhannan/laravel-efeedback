@@ -58,7 +58,7 @@ class ResourceController extends Controller
         $category->delete();
         
         
-        return redirect()->route('file.index')->with('success', 'File deleted successfully.');
+        return redirect()->route('showallfiles')->with('success', 'File deleted successfully.');
     }
 
 
