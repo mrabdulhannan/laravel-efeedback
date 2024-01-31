@@ -44,7 +44,8 @@ class User extends Authenticatable
     ];
 
     public function definecategories(){
-        return $this->hasMany(DefineCategories::class)->orderBy('created_at', 'DESC');
+        // return $this->hasMany(DefineCategories::class)->orderBy('created_at', 'DESC');
+        return $this->hasMany(DefineCategories::class)->orderBy('group_order', 'ASC');
     }
 
     public function definetopic(){

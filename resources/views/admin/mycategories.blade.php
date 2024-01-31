@@ -32,6 +32,24 @@
             content: '' !important;
         }
     </style>
+     <style>
+        .accordion-item {
+            position: relative;
+            padding: 0 0 0 25px;
+        }
+        .accordion-item::before {
+            position: absolute;
+            left: 7px;
+            top: 16px;
+            bottom: 16px;
+            width: 2px;
+            content: '';
+            border: 4px dotted gray;
+            width: 10px;
+            z-index: 99;
+            height: 22px;
+        }
+    </style>
 @endpush
 @section('content')
     <!-- Row start -->
@@ -69,7 +87,7 @@
                                 </ul>
 
                                 <div class="tab-content" id="customTabContent">
-                                    @foreach (Auth::user()->definetopic as $key => $topic)      
+                                    @foreach (Auth::user()->definetopic as $key => $topic)
                                         <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                             id="tab-{{ $topic->id }}" role="tabpanel"
                                             aria-labelledby="tab-{{ $topic->id }}">
@@ -77,9 +95,30 @@
 
                                             @php
                                                 // Group categories by their 'group' attribute
-                                                $groupedCategories = Auth::user()
-                                                    ->definecategories->where('topic_id', $topic->id)
-                                                    ->groupBy('group');
+                                                // $groupedCategories = Auth::user()
+                                                //     ->definecategories->where('topic_id', $topic->id)
+                                                //     ->groupBy('group')->orderBy('group_order');
+                                                $groupedCategories = DB::table('define_categories')
+                                                    ->select('group', DB::raw('MAX(id) as id'), DB::raw('MAX(group_order) as group_order'))
+                                                    ->where('topic_id', $topic->id)
+                                                    ->groupBy('group')
+                                                    ->orderBy('group_order') // Change this line
+                                                    ->get();
+                                                $allGroups = [];
+
+                                                // Iterate through the groupedCategories collection
+                                                foreach ($groupedCategories as $groupedCategory) {
+                                                    // Extract group and group_order
+                                                    $group = $groupedCategory->group;
+                                                    $groupOrder = $groupedCategory->group_order;
+
+                                                    // Store the group and order in the array
+                                                    $allGroups[] = [
+                                                        'group' => $group,
+                                                        'group_order' => $groupOrder,
+                                                    ];
+                                                }
+
                                             @endphp
                                             <div style="text-align:right">
                                                 <form action="{{ route('definecategories', ['id' => $topic->id]) }}"
@@ -91,76 +130,91 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                            @forelse ($groupedCategories as $group => $categories)
-                                                @php
-                                                    $cleanGroup = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $group));
-                                                @endphp
-                                                <div>
-                                                    <div class="accordion mt-1"
-                                                        id="accordion_{{ $topic->id }}_{{ $cleanGroup }}">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header"
-                                                                id="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                <button class="accordion-button collapsed" type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                    aria-expanded="true"
-                                                                    aria-controls="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                    {{ $group }}
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
-                                                                data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
-                                                                <div class="accordion-body">
-                                                                    <ul class="list-group" id="itemsList">
-                                                                        @foreach ($categories as $category)
-                                                                            <li
-                                                                                class="list-group-item d-flex justify-content-between align-items-center">
-                                                                                <div>
-                                                                                    <h5 class="mb-1">
-                                                                                        {{ $category->title }}
-                                                                                    </h5>
-                                                                                    <p class="mb-1">
-                                                                                        {{ $category->description }}</p>
-                                                                                    {{-- <span class="badge bg-info">{{ $category->group }}</span> --}}
-                                                                                </div>
-                                                                                <div class="d-flex">
+                                            <ul class="list-group" id="itemsListAccordian-{{ $topic->id }}">
+                                                @foreach ($allGroups as $groupData)
+                                                    @php
+                                                        $group = $groupData['group'];
+                                                        $group_order = $groupData['group_order'];
+                                                        $cleanGroup = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $group));
+
+                                                        $categories = Auth::user()
+                                                            ->definecategories->where('group', $group)
+                                                            ->sortByDesc('group_order')
+                                                            ->all();
+
+                                                    @endphp
+
+                                                    <li data-groupvalue="{{ $group }}"
+                                                        data-grouporder="{{ $group_order }}">
+                                                        <div class="accordion mt-1"
+                                                            id="accordion_{{ $topic->id }}_{{ $cleanGroup }}">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header"
+                                                                    id="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                                    <button class="accordion-button collapsed"
+                                                                        type="button" data-bs-toggle="collapse"
+                                                                        data-bs-target="#collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                                        aria-expanded="true"
+                                                                        aria-controls="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                                        {{ $group }}
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapse_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                                    class="accordion-collapse collapse"
+                                                                    aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
+                                                                    data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
+                                                                    <div class="accordion-body">
+                                                                        <ul class="list-group" id="itemsList">
+                                                                            @foreach ($categories as $category)
+                                                                                <li
+                                                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                                                     <div>
-                                                                                        <form
-                                                                                            action="{{ route('editCategory', ['id' => $category->id]) }}"
-                                                                                            method="post">
-                                                                                            @csrf
-                                                                                            <button type="submit"
-                                                                                                class="btn btn-warning  btn-sm me-1">Edit</button>
-                                                                                        </form>
+                                                                                        <h5 class="mb-1">
+                                                                                            {{ $category->title }}
+                                                                                        </h5>
+                                                                                        <p class="mb-1">
+                                                                                            {{ $category->description }}
+                                                                                        </p>
+                                                                                        {{-- <span class="badge bg-info">{{ $category->group }}</span> --}}
                                                                                     </div>
-                                                                                    <div>
-                                                                                        <form
-                                                                                            action="{{ route('deleteCategory', ['id' => $category->id]) }}"
-                                                                                            method="post"
-                                                                                            onsubmit="return confirm('Are you sure you want to delete this category?')">
-                                                                                            @csrf
-                                                                                            @method('DELETE')
-                                                                                            <button type="submit"
-                                                                                                class="btn btn-danger btn-sm">Delete</button>
-                                                                                        </form>
+                                                                                    <div class="d-flex">
+                                                                                        <div>
+                                                                                            <form
+                                                                                                action="{{ route('editCategory', ['id' => $category->id]) }}"
+                                                                                                method="post">
+                                                                                                @csrf
+                                                                                                <button type="submit"
+                                                                                                    class="btn btn-warning  btn-sm me-1">Edit</button>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            <form
+                                                                                                action="{{ route('deleteCategory', ['id' => $category->id]) }}"
+                                                                                                method="post"
+                                                                                                onsubmit="return confirm('Are you sure you want to delete this category?')">
+                                                                                                @csrf
+                                                                                                @method('DELETE')
+                                                                                                <button type="submit"
+                                                                                                    class="btn btn-danger btn-sm">Delete</button>
+                                                                                            </form>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </li>
-                                                                        @endforeach
-                                                                    </ul>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+
                                                         </div>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
 
-                                                    </div>
-                                                </div>
 
-                                            @empty
-                                                <p>No categories available for this topic.</p>
-                                            @endforelse
+
+
+
                                         </div>
                                     @endforeach
                                 </div>
@@ -178,56 +232,105 @@
 @endsection
 
 @push('script-page-level')
-    {{-- <script>
-    function editCategory(categoryId) {
-        // Assuming you have a route for editing
-        window.location.href = "{{ route('editCategory') }}/" + categoryId;
-    }
-</script> --}}
     <script>
         $(document).ready(function() {
             $('#customTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
                 // Handle tab shown event if needed
             });
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            var startDateInput = document.getElementsByName('start_date')[0];
-            var endDateInput = document.getElementsByName('end_date')[0];
-            var daysRemainingInput = document.getElementById('days_remaining');
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Add 'active' class to the first tab on page load
+            $('#customTabs li:first-child a').addClass('active tab-active');
 
-            // Add event listeners to recalculate the days remaining when the dates change
-            startDateInput.addEventListener('input', updateDaysRemaining);
-            endDateInput.addEventListener('input', updateDaysRemaining);
-
-            // Initial calculation on page load
-            updateDaysRemaining();
-
-            function updateDaysRemaining() {
-                var startDateValue = startDateInput.value;
-                var endDateValue = endDateInput.value;
-
-                if (startDateValue && endDateValue) {
-                    var startDate = new Date(startDateValue);
-                    var endDate = new Date(endDateValue);
-
-                    // Calculate the difference in days between the two dates
-                    var timeDifference = endDate.getTime() - startDate.getTime();
-                    var daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
-                    // Display the calculated days remaining
-                    daysRemainingInput.value = daysRemaining;
-                } else {
-                    daysRemainingInput.value = ''; // Reset to empty if either date is not provided
-                }
-            }
+            // ... Your existing JavaScript code ...
         });
     </script>
-        <script>
-            $(document).ready(function() {
-                // Add 'active' class to the first tab on page load
-                $('#customTabs li:first-child a').addClass('active tab-active');
-    
-                // ... Your existing JavaScript code ...
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Make the list items sortable
+            // $("#itemsList").sortable({
+            //     update: function(event, ui) {
+            //         //  updateOrder();
+            //         console.log("Cahnge Ocuur")
+
+            //     }
+            // });   
+
+            $('[id^="itemsListAccordian"]').sortable({
+                update: function(event, ui) {
+                    console.log("Change Occurred");
+                    // Extract the group value and order from the dragged item
+                    var groupValue = $(ui.item).data('groupvalue');
+                    var groupOrder = $(ui.item).data('grouporder');
+
+                    // Extract the order of categories within the group
+                    var categoryOrder = $(this).sortable('toArray', {
+                        attribute: 'data-category-id'
+                    });
+
+                    // Extract all group values and orders
+                    var groupData = [];
+
+
+                    $('[data-groupvalue]').each(function() {
+
+                        let group = $(this).data('groupvalue');
+                        let order = $(this).data('grouporder');
+
+                        if (order === null || order === undefined || order === 'null' ||
+                            order === "") {
+                            console.log("Order is Null");
+                            order = 1; // Set a default group order of 1
+                        }
+
+                        groupData.push({
+                            group: group,
+                            order: order
+                        });
+                    });
+
+                    // AJAX call to update the order
+                    // $.ajax({
+                    //     type: 'POST',
+                    //     url: '{{ route('updateGroupOrder') }}',
+                    //     data: {
+                    // group_id: groupID,
+                    // category_order: categoryOrder
+                    //         _token: '{{ csrf_token() }}'
+                    //     },
+                    //     success: function(response) {
+                    //         console.log(response);
+                    //         // Handle success response if needed
+                    //         console.log('Order updated successfully');
+                    //     },
+                    //     error: function(error) {
+                    //         // Handle error if needed
+                    //         console.error('Error updating order:', error);
+                    //     }
+                    // });
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('updateGroupOrder') }}",
+                        data: {
+                            group_id: groupValue,
+                            group_order: groupOrder,
+                            all_groups: groupData,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                }
             });
-        </script>
+        });
+    </script>
 @endpush

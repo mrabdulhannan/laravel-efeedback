@@ -218,4 +218,17 @@ class CategoriesController extends Controller
 
         return response()->json($responseData);
     }
+
+    public function updateGroupOrder(Request $request)
+    {
+        $allGroups = $request->input('all_groups');
+        foreach ($allGroups as $index => $groupData) {
+            $group = $groupData['group'];
+            // Update the group order in your database or model
+            // Assuming you have a model named 'Group' for your groups
+            DefineCategories::where('group', $group)->update(['group_order' => $index]);
+        }
+        return response()->json([$request->all()]);
+        
+    }
 }
