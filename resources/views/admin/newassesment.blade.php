@@ -112,9 +112,15 @@
                                             <!-- Item IDs will be dynamically added here -->
                                             @php
                                                 // Group categories by their 'group' attribute
+                                                // $groupedCategories = Auth::user()
+                                                //     ->definecategories->where('topic_id', $topic->id)
+                                                //     ->groupBy('group');
                                                 $groupedCategories = Auth::user()
                                                     ->definecategories->where('topic_id', $topic->id)
-                                                    ->groupBy('group');
+                                                    ->groupBy('group')
+                                                    ->map(function ($group) {
+                                                        return $group->sortBy('group_order');
+                                                    });
                                                 $totalGroups = $groupedCategories->count();
                                             @endphp
                                             @forelse ($groupedCategories as $group => $categories)
@@ -226,7 +232,7 @@
                                 <div id="appendedCat"></div>
 
                                 <!-- Add an ID to your button for easier selection -->
-                                <a id="addFeedbackBtn" class="btn btn-success">Add Category</a>
+                                <a id="addFeedbackBtn" class="btn btn-secondary">Add Category</a>
 
                                 <!-- Add an ID to your form container for easier selection -->
                                 <div id="CatFormContainer" class="" style="display: none;">
@@ -296,7 +302,7 @@
                                             // Serialize the form data
                                             var formData = $('#subCategoryForm_' + formId).serialize();
                                             destroyTinyMCE();
-                                            alert($('#subCategoryForm_' + formId).attr('action'));
+
                                             // Make an AJAX request to the form's action
                                             $.ajax({
                                                 type: 'POST',

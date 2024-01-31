@@ -61,9 +61,12 @@ Route::get('forgetpassword', function () {
 Route::post('/updatepassword', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('updatepassword');
 
 Route::delete('/deleteCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'deleteCategory'])->name('deleteCategory');
-
 Route::put('/updateCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'updateCategory'])->name('updateCategory');
 Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'editCategory'])->name('editCategory');
+// In your web.php file
+Route::post('/updateGroupOrder',[App\Http\Controllers\CategoriesController::class, 'updateGroupOrder'])->name('updateGroupOrder');
+
+
 
 // Topics Relevent Routes
 Route::get('/definetopic', [App\Http\Controllers\TopicsController::class, 'create'])->name('definetopic');
