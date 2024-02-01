@@ -228,7 +228,19 @@ class CategoriesController extends Controller
             // Assuming you have a model named 'Group' for your groups
             DefineCategories::where('group', $group)->update(['group_order' => $index]);
         }
+
+        $categoryData = $request->input('category_data');
+
+    // Loop through each category and update the category order
+    foreach ($categoryData as $index => $category) {
+        $categoryId = $category['categoryId'];
+
+        // Update the category order in your database or model
+        // Assuming you have a model named 'DefineCategories' for your categories
+        DefineCategories::where('id', $categoryId)->update(['category_order' => $index]);
+    }
+
+
         return response()->json([$request->all()]);
-        
     }
 }
