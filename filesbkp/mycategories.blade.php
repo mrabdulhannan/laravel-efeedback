@@ -40,35 +40,15 @@
 
         .accordion-item::before {
             position: absolute;
-            left: 9px;
-            top: 27px;
-            bottom: 3px;
-            width: 11px;
-            background: transparent;
+            left: 7px;
+            top: 16px;
+            bottom: 16px;
+            width: 2px;
             content: '';
-            border: dotted gray;
-            cursor: move;
-            height: 17px;
-            transform: translateY(-50%);
-        }
-
-        .list-group-item{
-            position: relative;
-            padding: 0 0 0 25px;
-        }
-        .list-group .list-group-item{padding-left: 2rem !important;}
-        .list-group-item:before{
-            position: absolute;
-            left: 9px;
-            top: 38px;
-            bottom: 3px;
-            width: 11px;
-            background: transparent;
-            content: '';
-            border: dotted gray;
-            cursor: move;
-            height: 17px;
-            transform: translateY(-50%);
+            border: 4px dotted gray;
+            width: 10px;
+            z-index: 99;
+            height: 22px;
         }
     </style>
 @endpush
@@ -186,11 +166,11 @@
                                                                     data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
                                                                     <div class="accordion-body">
                                                                         <ul class="list-group"
-                                                                            id="itemsListAccordian-{{ $cleanGroup }}">
+                                                                            id="itemsList-{{ $cleanGroup }}">
                                                                             @foreach ($categories as $category)
-                                                                                <li data-categoryid="{{ $category->id }}"
-                                                                                    data-categoryorder="{{ $category->category_order }}"
-                                                                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                                                                    data-categoryId="{{ $category->id }}"
+                                                                                    data-categoryOrder="{{ $category->category_order }}">
                                                                                     <div>
                                                                                         <h5 class="mb-1">
                                                                                             {{ $category->title }}
@@ -198,7 +178,7 @@
                                                                                         <p class="mb-1">
                                                                                             {{ $category->description }}
                                                                                         </p>
-                                                                                        {{-- <span class="badge bg-info">{{ $category->group }}</span> --}}
+
                                                                                     </div>
                                                                                     <div class="d-flex">
                                                                                         <div>
@@ -233,11 +213,6 @@
                                                     </li>
                                                 @endforeach
                                             </ul>
-
-
-
-
-
                                         </div>
                                     @endforeach
                                 </div>
@@ -275,25 +250,36 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function() {
-           
+            // Make the list items sortable
+            // $("#itemsList").sortable({
+            //     update: function(event, ui) {
+            //         //  updateOrder();
+            //         console.log("Cahnge Ocuur")
+
+            //     }
+            // });   
+
             $('[id^="itemsListAccordian"]').sortable({
                 update: function(event, ui) {
                     console.log("Change Occurred");
                     // Extract the group value and order from the dragged item
                     var groupValue = $(ui.item).data('groupvalue');
                     var groupOrder = $(ui.item).data('grouporder');
-                  
+                    
+
+                    // Extract the order of categories within the group
+                    var categoryOrder = $(this).sortable('toArray', {
+                        attribute: 'data-category-id'
+                    });
+
                     // Extract all group values and orders
                     var groupData = [];
-                    var categoryData = [];
 
 
                     $('[data-groupvalue]').each(function() {
 
                         let group = $(this).data('groupvalue');
                         let order = $(this).data('grouporder');
-
-
 
                         if (order === null || order === undefined || order === 'null' ||
                             order === "") {
@@ -305,24 +291,7 @@
                             group: group,
                             order: order
                         });
-
-
-
                     });
-
-                    $('[data-categoryid]').each(function() {
-                       
-                        var categoryId = $(this).data('categoryid');
-                        var categoryOrder = $(this).data('categoryorder');
-
-                        categoryData.push({
-                            categoryId: categoryId,
-                            categoryOrder: categoryOrder
-                        });
-
-                    });
-
-
                     $.ajax({
                         type: "POST",
                         url: "{{ route('updateGroupOrder') }}",
@@ -330,7 +299,6 @@
                             group_id: groupValue,
                             group_order: groupOrder,
                             all_groups: groupData,
-                            category_data: categoryData,
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
@@ -341,10 +309,50 @@
                         }
                     });
                 }
-
-
             });
-          
+
+            $('[id^="itemsList"]').sortable({
+                update: function(event, ui) {
+                    console.log("Category Change Occurred");
+
+                    var categoryId = $(ui.item).data('categoryId');
+                    var categoryOrder = $(ui.item).data('categoryOrder');
+
+                    // Extract the order of categories within the group
+                    var categoryOrder = $(this).sortable('toArray', {
+                        attribute: 'data-category-id'
+                    });
+
+                    // Extract all group values and orders
+                    var groupData = [];
+
+
+                    $('[data-groupvalue]').each(function() {
+
+                        let categoryId = $(this).data('categoryId');
+                        let categoryOrder = $(this).data('categoryOrder');
+
+                        groupData.push({
+                            categoryId: categoryId,
+                            categoryOrder: categoryOrder
+                        });
+                    });
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('updateCategoryOrder') }}",
+                        data: {
+                            all_categories: groupData,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            })
         });
     </script>
 @endpush
