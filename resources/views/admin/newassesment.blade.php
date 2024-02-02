@@ -56,6 +56,34 @@
             background-color: red;
             /* Set the background color for the active state */
         }
+
+        .accordion-body {
+            background-color: #F4FAFF;
+        }
+
+        .sticky-btn {
+            position: fixed;
+            right: 0;
+            top: 90%;
+            z-index: 9999;
+            text-align: right;
+        }
+
+        .sticky-btn .btn {
+            padding: 15px 30px;
+            color: #000000;
+            margin-right: 25px;
+            display: inline-block;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .bi-arrow-up-circle-fill::before {
+            content: "\f139";
+            font-size: 40PX;
+        }
     </style>
 @endpush
 
@@ -103,7 +131,7 @@
                         </div>
                         <div class="col-3">
                             <div class="tab-content" id="customTabContent">
-
+                                <button class="btn btn-primary" id="toggleAccordion">Expand All</button>
                                 @foreach (Auth::user()->definetopic as $key => $topic)
                                     <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                         id="tab-{{ $topic->id }}" role="tabpanel"
@@ -112,15 +140,9 @@
                                             <!-- Item IDs will be dynamically added here -->
                                             @php
                                                 // Group categories by their 'group' attribute
-                                                // $groupedCategories = Auth::user()
-                                                //     ->definecategories->where('topic_id', $topic->id)
-                                                //     ->groupBy('group');
                                                 $groupedCategories = Auth::user()
                                                     ->definecategories->where('topic_id', $topic->id)
-                                                    ->groupBy('group')
-                                                    ->map(function ($group) {
-                                                        return $group->sortBy('group_order');
-                                                    });
+                                                    ->groupBy('group');
                                                 $totalGroups = $groupedCategories->count();
                                             @endphp
                                             @forelse ($groupedCategories as $group => $categories)
@@ -174,45 +196,48 @@
                                                                     </li>
                                                                 @endforeach
                                                                 <div id="appendedSubCat_{{ $cleanGroup }}"></div>
-                                                                <a id="addSubCatBtn"
-                                                                    class="addSubCatBtn btn btn-success">Add
-                                                                    Sub-Category</a>
-                                                                <div id="SubCatForm" class="SubCatForm"
-                                                                    style="display: none;">
-                                                                    <form action="{{ route('addcategory') }}"
-                                                                        enctype="multipart/form-data" method="POST"
-                                                                        class="sub-category-form"
-                                                                        id="subCategoryForm_{{ $cleanGroup }}">
-                                                                        @csrf
-                                                                        <input type="text" id="current_topic_id_sub"
-                                                                            class="current_topic_id_sub"
-                                                                            name="current_topic_id_sub" hidden
-                                                                            value="{{ $firstTopicId }}" />
+                                                                <div>
+                                                                    <a id="addSubCatBtn"
+                                                                        class="addSubCatBtn btn btn-success mt-1 bg-success">Add
+                                                                        Sub-Category</a>
+                                                                    <div id="SubCatForm" class="SubCatForm"
+                                                                        style="display: none;">
+                                                                        <form action="{{ route('addcategory') }}"
+                                                                            enctype="multipart/form-data" method="POST"
+                                                                            class="sub-category-form"
+                                                                            id="subCategoryForm_{{ $cleanGroup }}">
+                                                                            @csrf
+                                                                            <input type="text" id="current_topic_id_sub"
+                                                                                class="current_topic_id_sub"
+                                                                                name="current_topic_id_sub" hidden
+                                                                                value="{{ $firstTopicId }}" />
 
-                                                                        <label for="cat_title" class="form-label">Sub
-                                                                            Category <i>(like No TOC Provided, TOC not as
-                                                                                per standards etc...)</i></label>
+                                                                            <label for="cat_title" class="form-label">Insert
+                                                                                Title of sub category</i></label>
 
-                                                                        <input hidden type="text" class="form-control"
-                                                                            id="cat_title" name="cat_title" required
-                                                                            value="{{ $group }}">
+                                                                            <input hidden type="text"
+                                                                                class="form-control" id="cat_title"
+                                                                                name="cat_title" required
+                                                                                value="{{ $group }}">
 
-                                                                        <input type="text" class="form-control"
-                                                                            id="sub_cat_title" name="sub_cat_title" required
-                                                                            value="">
+                                                                            <input type="text" class="form-control"
+                                                                                id="sub_cat_title" name="sub_cat_title"
+                                                                                required value="">
 
-                                                                        <label for="sub_cat_description"
-                                                                            class="form-label">Description</label>
+                                                                            <label for="sub_cat_description"
+                                                                                class="form-label">Insert description of
+                                                                                sub category</label>
 
-                                                                        <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
-                                                                        <button type="button"
-                                                                            class="btn btn-primary ajax-submit-btn"
-                                                                            data-form-id="{{ $cleanGroup }}">
-                                                                            {{ __('Save Category') }}
-                                                                        </button>
+                                                                            <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
+                                                                            <button type="button"
+                                                                                class="btn btn-primary ajax-submit-btn mb-1 mt-1"
+                                                                                data-form-id="{{ $cleanGroup }}">
+                                                                                {{ __('Save sub Category') }}
+                                                                            </button>
 
-                                                                    </form>
+                                                                        </form>
 
+                                                                    </div>
                                                                 </div>
 
                                                             </div>
@@ -232,7 +257,7 @@
                                 <div id="appendedCat"></div>
 
                                 <!-- Add an ID to your button for easier selection -->
-                                <a id="addFeedbackBtn" class="btn btn-secondary">Add Category</a>
+                                <a id="addFeedbackBtn" class="btn btn-secondary mt-2 mb-2">Add a new feedback Category</a>
 
                                 <!-- Add an ID to your form container for easier selection -->
                                 <div id="CatFormContainer" class="" style="display: none;">
@@ -247,17 +272,18 @@
                                         <input type="text" class="form-control" id="cat_title" name="cat_title"
                                             required value="">
 
-                                        <label for="sub_cat_title" class="form-label">Sub-category <i>(like No
-                                                TOC Provided, TOC not as per standards etc...)</i></label>
+                                        <label for="sub_cat_title" class="form-label">Insert title for sub
+                                            category</label>
 
                                         <input type="text" class="form-control" id="sub_cat_title"
                                             name="sub_cat_title" required value="">
 
-                                        <label for="sub_cat_description" class="form-label">Description</label>
+                                        <label for="sub_cat_description" class="form-label">Insert description for sub
+                                            category</label>
 
                                         <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
-                                        <button type="button" class="btn btn-primary ajax-submit-btn-cat">
-                                            {{ __('Save Category') }}
+                                        <button type="button" class="btn btn-primary ajax-submit-btn-cat mb-1 mt-1">
+                                            {{ __('Save sub category') }}
                                         </button>
 
                                     </form>
@@ -576,11 +602,21 @@
             </div>
         </div>
         <!-- Row end -->
+
+        <div class="sticky-btn"><a onclick="Scrollup()" class="btn"><span
+                class="bi bi-arrow-up-circle-fill"></span> </a></div>
     @endsection
 
     @push('script-page-level')
+
         <script src="{{ asset('assets/tinymce/tinymce.min.js') }}"></script>
         <script>
+
+            function Scrollup()
+            {
+                console.log("Scroll UP");
+                window.scrollTo(0, 0);
+            }
             $(window).on('load', function() {
                 $("#customTabs .tab-active").trigger('click');
             })
@@ -1014,4 +1050,44 @@
 
             });
         </script>
+        <script>
+            
+
+
+            document.getElementById('toggleAccordion').addEventListener('click', function() {
+                // Get all accordion items
+                var accordionItems = document.querySelectorAll('.accordion-item');
+
+                // Toggle the collapse state for each accordion item
+                accordionItems.forEach(function(item) {
+                    toggleAccordionItem(item);
+                });
+            });
+
+            function toggleAccordionItem(item) {
+                var accordionButton = item.querySelector('.accordion-button');
+                var targetId = accordionButton.getAttribute('data-bs-target');
+                var targetElement = document.querySelector(targetId);
+
+                // Check if the target element is currently collapsed
+                var isCollapsed = targetElement.classList.contains('collapse');
+                // console.log(isCollapsed);
+
+                // Toggle the collapse state manually
+                if (isCollapsed) {
+                    targetElement.classList.remove('collapse');
+                    document.getElementById('toggleAccordion').innerText = 'Collapse All';
+                } else {
+                    targetElement.classList.add('collapse');
+                    document.getElementById('toggleAccordion').innerText = 'Expand All';
+                }
+
+                // // Update the button text based on the new collapse state
+                // var buttonText = isCollapsed ? '' : ;
+                // document.getElementById('toggleAccordion').innerText = buttonText;
+            }
+        </script>
     @endpush
+
+
+    
