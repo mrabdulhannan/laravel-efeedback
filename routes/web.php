@@ -26,6 +26,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
+//Routes for assessments
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/definecategories/{id}', [App\Http\Controllers\CategoriesController::class, 'create'])->name('definecategories');
@@ -39,6 +41,8 @@ Route::get('/newassesment', [App\Http\Controllers\HomeController::class, 'newass
 Route::get('/previewpage', [App\Http\Controllers\CategoriesController::class, 'showData'])->name('previewpage');
 
 Route::get('/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
+
+Route::post('/addcategory', [App\Http\Controllers\CategoriesController::class, 'addcategory'])->name('addcategory');
 
 
 Route::get('log-in', function () {
@@ -57,9 +61,12 @@ Route::get('forgetpassword', function () {
 Route::post('/updatepassword', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('updatepassword');
 
 Route::delete('/deleteCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'deleteCategory'])->name('deleteCategory');
-
 Route::put('/updateCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'updateCategory'])->name('updateCategory');
 Route::post('/editCategory/{id}', [App\Http\Controllers\CategoriesController::class, 'editCategory'])->name('editCategory');
+// In your web.php file
+Route::post('/updateGroupOrder',[App\Http\Controllers\CategoriesController::class, 'updateGroupOrder'])->name('updateGroupOrder');
+
+
 
 // Topics Relevent Routes
 Route::get('/definetopic', [App\Http\Controllers\TopicsController::class, 'create'])->name('definetopic');
@@ -86,3 +93,6 @@ Route::get('/files', [App\Http\Controllers\ResourceController::class, 'index'])-
 Route::get('/showallfiles', [App\Http\Controllers\ResourceController::class, 'showallfiles'])->name('showallfiles');
 Route::post('/files', [App\Http\Controllers\ResourceController::class, 'store'])->name('file.store');
 Route::delete('/files/{id}/{filename}', [App\Http\Controllers\ResourceController::class, 'destroy'])->name('file.destroy');
+
+//Profiler
+Route::post('/updateImage', [App\Http\Controllers\ProfileController::class, 'updateImage'])->name('updateImage');

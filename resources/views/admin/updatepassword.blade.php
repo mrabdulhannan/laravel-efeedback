@@ -14,9 +14,21 @@
             @endif
             <div class="col-md-8">
                 <div class="card">
+                    <div class="card-body" style="display: flex;
+                    justify-content: center;">
+                        <div class="photo-holder">
+                            <img src="{{ isset(Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/avatars/avatar-login.png') }}"
+                                alt="Profile Picture" class="rounded-circle" width="210">
+                            <div id="profile-picture">
+                                <i class="fadeIn animated bx bx-camera"></i> <br>
+                                CHANGE<br> PROFILE PHOTO
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-header">{{ __('Reset Password') }}</div>
 
                     <div class="card-body">
+                        
                         <form method="POST" action="{{ route('updatepassword') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="row mb-3">
@@ -53,19 +65,6 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="profile_image" class="form-label text-md-right">Profile Image</label>
-                                <div class="">
-                                    <input id="profile_image" type="file" class="form-control" name="profile_image"
-                                        value="">
-                                </div>
-                                @if(Auth::user()->profile_image)
-                                <div class="form-group mt-3">
-                                    <label for="image-preview" class="form-label text-md-right">Current Profile Image</label>
-                                    <img id="image-preview" src="{{ asset('storage/' . Auth::user()->profile_image) }}" alt="Current Image" style="max-width: 100%; max-height: 200px;">
-                                </div>
-                            @endif
-                            </div>
 
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
@@ -78,25 +77,64 @@
 
                     </div>
                 </div>
+
+                <div>
+                    <style type="text/css">
+                        .photo-holder {
+                            background: #1c2a2d;
+                            position: relative;
+                            border-radius: 50%;
+                            border: 1px solid #1c2a2d;
+                            width: 200px;
+                        }
+
+                        .photo-holder div {
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            transform: translate(-50%, -50%);
+                            opacity: 0;
+                            max-width: 200px;
+                        }
+
+                        .photo-holder:hover img {
+                            opacity: 60%;
+                        }
+
+                        .photo-holder:hover div {
+                            opacity: 1;
+                            cursor: pointer;
+                            color: white;
+                        }
+
+                        .photo-holder:hover i {
+                            font-size: 30px;
+                        }
+                    </style>
+                    
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.getElementById('profile-picture').addEventListener('click', function() {
+                                document.getElementById('profile-picture-input').click();
+                            });
+
+                            document.getElementById('profile-picture-input').addEventListener('change', function() {
+                                document.getElementById('profile-picture-form').submit();
+                            });
+                        });
+                    </script>
+
+                    <form method="POST" action="{{ route('updateImage') }}" enctype="multipart/form-data"
+                        id="profile-picture-form">
+                        @csrf
+                        <input type="file" name="profile_picture" id="profile-picture-input" style="display: none;">
+                        <input type="hidden" name="profile_picture_del"
+                            value="{{ isset(Auth::user()->profile_image) ? asset('storage/' . Auth::user()->profile_image) : '' }}"
+                            id="profile_picture_del">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 @endsection
-<script>
-    function previewImage(input) {
-        var preview = document.getElementById('image-preview');
-        var file = input.files[0];
-        var reader = new FileReader();
-
-        reader.onloadend = function () {
-            preview.src = reader.result;
-        };
-
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            preview.src = "";
-        }
-    }
-</script>
-

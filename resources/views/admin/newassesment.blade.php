@@ -7,9 +7,10 @@
             background-color: #007bff;
             color: white;
         }
+
         .insert-button-class {
-    float: right;
-}
+            float: right;
+        }
 
         .accordion-button {
             padding-left: 50px !important;
@@ -58,17 +59,24 @@
     </style>
 @endpush
 
+
 @section('content')
     <!-- Row start -->
     <div class="row">
         <div class="col-xxl-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Write New Feedback</h3>
+                    <h3 class="card-title">Insert Comments</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="custom-tabs-container">
+                            @php
+                                $firstTopicId = Auth::user()
+                                    ->definetopic()
+                                    ->orderBy('topic_order', 'ASC')
+                                    ->first()->id;
+                            @endphp
                             @if (Auth::user()->definetopic !== null && count(Auth::user()->definetopic) > 0)
                                 <ul class="nav nav-tabs" id="customTabs" role="tablist">
                                     @foreach (Auth::user()->definetopic as $key => $topic)
@@ -95,6 +103,7 @@
                         </div>
                         <div class="col-3">
                             <div class="tab-content" id="customTabContent">
+
                                 @foreach (Auth::user()->definetopic as $key => $topic)
                                     <div class="tab-pane fade {{ $key === 0 ? 'active show' : '' }}"
                                         id="tab-{{ $topic->id }}" role="tabpanel"
@@ -103,14 +112,21 @@
                                             <!-- Item IDs will be dynamically added here -->
                                             @php
                                                 // Group categories by their 'group' attribute
+                                                // $groupedCategories = Auth::user()
+                                                //     ->definecategories->where('topic_id', $topic->id)
+                                                //     ->groupBy('group');
                                                 $groupedCategories = Auth::user()
                                                     ->definecategories->where('topic_id', $topic->id)
-                                                    ->groupBy('group');
+                                                    ->groupBy('group')
+                                                    ->map(function ($group) {
+                                                        return $group->sortBy('group_order');
+                                                    });
                                                 $totalGroups = $groupedCategories->count();
                                             @endphp
                                             @forelse ($groupedCategories as $group => $categories)
                                                 @php
                                                     $cleanGroup = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $group));
+
                                                 @endphp
 
                                                 <div class="accordion mt-1"
@@ -142,23 +158,68 @@
                                                                         </button>
 
                                                                         <div class="description d-none ">
-                                                                            <label class="d-flex0 p-3 ">
-                                                                                {{ $category->description }} <input
-                                                                                    type="checkbox"
-                                                                                    class="me-2 ms-3 chk sub-checkbox d-none"
-                                                                                    data-category-id="{{ $category->id }}" /><span
-                                                                                    onclick="toggleTextWithIcon(this)"
-                                                                                    class="px-3 py-1 text-white bg-success insert-button-class rounded"
-                                                                                    style="cursor: pointer;">insert <i
-                                                                                        class="bi bi-arrow-right"></i></span>
-                                                                            </label>
+                                                                            <div class="d-flex flex-column">
+                                                                                <div>{{ $category->description }}</div>
+                                                                                <label class="p-3 ">
+                                                                                    <input type="checkbox"
+                                                                                        class="me-2 ms-3 chk sub-checkbox d-none"
+                                                                                        data-category-id="{{ $category->id }}" /><a
+                                                                                        onclick="toggleTextWithIcon(this)"
+                                                                                        class="px-3 py-1 text-white bg-success insert-button-class rounded"
+                                                                                        style="cursor: pointer;">insert <i
+                                                                                            class="bi bi-arrow-right"></i></a>
+                                                                                </label>
+                                                                            </div>
                                                                         </div>
                                                                     </li>
                                                                 @endforeach
+                                                                <div id="appendedSubCat_{{ $cleanGroup }}"></div>
+                                                                <a id="addSubCatBtn"
+                                                                    class="addSubCatBtn btn btn-success">Add
+                                                                    Sub-Category</a>
+                                                                <div id="SubCatForm" class="SubCatForm"
+                                                                    style="display: none;">
+                                                                    <form action="{{ route('addcategory') }}"
+                                                                        enctype="multipart/form-data" method="POST"
+                                                                        class="sub-category-form"
+                                                                        id="subCategoryForm_{{ $cleanGroup }}">
+                                                                        @csrf
+                                                                        <input type="text" id="current_topic_id_sub"
+                                                                            class="current_topic_id_sub"
+                                                                            name="current_topic_id_sub" hidden
+                                                                            value="{{ $firstTopicId }}" />
+
+                                                                        <label for="cat_title" class="form-label">Sub
+                                                                            Category <i>(like No TOC Provided, TOC not as
+                                                                                per standards etc...)</i></label>
+
+                                                                        <input hidden type="text" class="form-control"
+                                                                            id="cat_title" name="cat_title" required
+                                                                            value="{{ $group }}">
+
+                                                                        <input type="text" class="form-control"
+                                                                            id="sub_cat_title" name="sub_cat_title" required
+                                                                            value="">
+
+                                                                        <label for="sub_cat_description"
+                                                                            class="form-label">Description</label>
+
+                                                                        <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
+                                                                        <button type="button"
+                                                                            class="btn btn-primary ajax-submit-btn"
+                                                                            data-form-id="{{ $cleanGroup }}">
+                                                                            {{ __('Save Category') }}
+                                                                        </button>
+
+                                                                    </form>
+
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
 
                                             @empty
                                                 <p>No categories available for this topic.</p>
@@ -166,6 +227,336 @@
                                         </ul>
                                     </div>
                                 @endforeach
+                                <!-- Include jQuery library -->
+                                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                                <div id="appendedCat"></div>
+
+                                <!-- Add an ID to your button for easier selection -->
+                                <a id="addFeedbackBtn" class="btn btn-secondary">Add Category</a>
+
+                                <!-- Add an ID to your form container for easier selection -->
+                                <div id="CatFormContainer" class="" style="display: none;">
+                                    <form action="{{ route('addcategory') }}" enctype="multipart/form-data"
+                                        method="POST" class="category-form" id="categoryForm">
+                                        @csrf
+                                        <input type="text" id="current_topic_id" value="{{ $firstTopicId }}"
+                                            name="current_topic_id" hidden />
+                                        <label for="cat_title" class="form-label">Feedback Category <i>(like
+                                                Table of Content, Referencing & Citation etc...)</i></label>
+
+                                        <input type="text" class="form-control" id="cat_title" name="cat_title"
+                                            required value="">
+
+                                        <label for="sub_cat_title" class="form-label">Sub-category <i>(like No
+                                                TOC Provided, TOC not as per standards etc...)</i></label>
+
+                                        <input type="text" class="form-control" id="sub_cat_title"
+                                            name="sub_cat_title" required value="">
+
+                                        <label for="sub_cat_description" class="form-label">Description</label>
+
+                                        <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
+                                        <button type="button" class="btn btn-primary ajax-submit-btn-cat">
+                                            {{ __('Save Category') }}
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                                <script>
+                                    const elementId = `description_112233`;
+                                    const items = <?= Auth::user()->definecategories ?>;
+                                    const selectedItems = new Set();
+
+                                    function destroyTinyMCE() {
+                                        tinymce.remove();
+                                    }
+
+                                    function initializeTinyMCE(elementId) {
+                                        tinymce.init({
+                                            selector: `#${elementId}`,
+                                            plugins: ['link', 'autoresize'],
+                                            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | link',
+                                            branding: false,
+                                            menubar: false,
+                                            autoresize_bottom_margin: 16, // Optional: Specify the bottom margin
+                                            autoresize_max_height: 500, // Optional: Specify the maximum height
+                                            autoresize_min_height: 100,
+                                        });
+                                    }
+                                    $(document).ready(function() {
+                                        let currentTopicId;
+                                        // $('#addFeedbackBtn').click(function() {
+                                        $(document).on('click', '#addFeedbackBtn', function() {
+                                            // alert(currentTopicId);
+                                            $('#CatFormContainer').toggle();
+                                        });
+                                        $(document).on('click', '.addSubCatBtn', function() {
+                                            $(this).next('.SubCatForm').toggle();
+                                        });
+
+                                        // $('.ajax-submit-btn').click(function() {
+                                        $(document).on('click', '.ajax-submit-btn', function() {
+                                            var formId = $(this).data('form-id');
+
+                                            // Serialize the form data
+                                            var formData = $('#subCategoryForm_' + formId).serialize();
+                                            destroyTinyMCE();
+
+                                            // Make an AJAX request to the form's action
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: $('#subCategoryForm_' + formId).attr('action'),
+                                                data: formData,
+                                                success: function(response) {
+                                                    // Handle the response here
+                                                    console.log(response);
+
+                                                    var categoryId = response.category_id;
+                                                    var title = response.title;
+                                                    var description = response.description;
+                                                    var user_id = response.user_id;
+                                                    var group = response.group;
+
+                                                    var newData = {
+                                                        "id": categoryId,
+                                                        "user_id": user_id,
+                                                        "title": title,
+                                                        "description": description,
+                                                        "group": group,
+                                                        "topic_id": response.topic_id,
+                                                    };
+
+                                                    items.push(newData);
+                                                    selectedItems.add(categoryId);
+                                                    var descriptionHTML = "";
+
+                                                    // Concatenate HTML content for all selected items
+                                                    selectedItems.forEach(itemId => {
+                                                        const selectedItem = items.find(item => item.id === itemId);
+                                                        if (selectedItem) {
+
+                                                            descriptionHTML += '<p><strong>' + selectedItem.title +
+                                                                '</strong></p>';
+                                                            descriptionHTML += '<p>' + selectedItem.description +
+                                                                '</p>';
+                                                        }
+                                                    });
+
+
+                                                    jQuery("#description_112233").val(descriptionHTML);
+                                                    console.log(descriptionHTML)
+
+                                                    initializeTinyMCE(elementId);
+                                                    var newAccordionHTML = generateInnerAccordion(response);
+
+
+
+                                                    jQuery('#appendedSubCat_' + formId).append(newAccordionHTML);
+                                                },
+                                                error: function(error) {
+                                                    console.error(error);
+                                                }
+                                            });
+                                        });
+
+                                        // $('.ajax-submit-btn-cat').click(function() {
+                                        $(document).on('click', '.ajax-submit-btn-cat', function() {
+                                            var formId = $(this).data('form-id');
+
+                                            // Serialize the form data
+                                            var formData = $('#categoryForm').serialize();
+                                            destroyTinyMCE();
+                                            // Make an AJAX request to the form's action
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: $('#categoryForm').attr('action'),
+                                                data: formData,
+                                                success: function(response) {
+                                                    var categoryId = response.category_id;
+                                                    var title = response.title;
+                                                    var description = response.description;
+                                                    var user_id = response.user_id;
+                                                    var group = response.group;
+
+                                                    var newData = {
+                                                        "id": categoryId,
+                                                        "user_id": user_id,
+                                                        "title": title,
+                                                        "description": description,
+                                                        "group": group,
+                                                        "topic_id": response.topic_id,
+                                                    };
+
+                                                    items.push(newData);
+                                                    selectedItems.add(categoryId);
+                                                    var descriptionHTML = "";
+
+                                                    // Concatenate HTML content for all selected items
+                                                    selectedItems.forEach(itemId => {
+                                                        const selectedItem = items.find(item => item.id === itemId);
+                                                        if (selectedItem) {
+
+                                                            descriptionHTML += '<p><strong>' + selectedItem.title +
+                                                                '</strong></p>';
+                                                            descriptionHTML += '<p>' + selectedItem.description +
+                                                                '</p>';
+                                                        }
+                                                    });
+
+                                                    jQuery("#description_112233").val(descriptionHTML);
+                                                    console.log(descriptionHTML)
+
+                                                    initializeTinyMCE(elementId);
+
+                                                    var newAccordionHTML = generateAccordion(response);
+                                                    $('#appendedCat').append(newAccordionHTML);
+                                                },
+                                                error: function(error) {
+                                                    console.error(error);
+                                                }
+                                            });
+                                        });
+
+                                        function generateAccordion(category) {
+                                            // Escape HTML entities in the title and description to prevent XSS attacks
+                                            var escapedTitle = $('<div>').text(category.title).html();
+                                            var escapedDescription = $('<div>').text(category.description).html();
+                                            var cleangroup = category.group; // Replace this with your actual string
+
+                                            // Remove special characters and spaces
+                                            cleangroup = cleangroup.replace(/[^a-zA-Z0-9-]/g, '');
+
+                                            // Build the accordion HTML based on the provided data
+                                            var accordionHTML = `
+                                            <div class="accordion mt-1 list-group" id="accordion_${category.topic_id}_${cleangroup}">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="heading_${category.topic_id}_${cleangroup}">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse_${category.topic_id}_${cleangroup}"
+                                                            aria-expanded="true"
+                                                            aria-controls="collapse_${category.topic_id}_${cleangroup}">
+                                                            ${category.group}
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapse_${category.topic_id}_${cleangroup}" class="accordion-collapse collapse"
+                                                        aria-labelledby="heading_${category.topic_id}_${cleangroup}"
+                                                        data-bs-parent="#accordion_${category.topic_id}_${cleangroup}">
+                                                        <div class="accordion-body">
+                                                            <li class="list-group-item subcat-items p-2"
+                                                                        data-category-id="${category.category_id}">
+                                                                        <button
+                                                                            class="btn btn-primary- btn-sm mt-2 subcat-btn-plus-minus accordion-button collapsed">
+
+                                                                            <span
+                                                                                class="category-title">${category.title }</span>
+                                                                        </button>
+
+                                                                        <div class="description d-none ">
+                                                                            <div class="d-flex flex-column">
+                                                                                <div>${category.description}</div>
+                                                                                <label class="p-3 ">
+                                                                                    <input type="checkbox"
+                                                                                        class="me-2 ms-3 chk sub-checkbox d-none selected2"
+                                                                                        data-category-id="${category.category_id}"checked /><a
+                                                                                        onclick="toggleTextWithIcon(this)"
+                                                                                        class="px-3 py-1 text-white bg-success insert-button-class rounded active bg-danger"
+                                                                                        style="cursor: pointer;"><i class="bi bi-arrow-left"></i> Remove</a>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                    <div id="appendedSubCat_${cleangroup}"></div>
+                                                                <a id="addSubCatBtn"
+                                                                    class="addSubCatBtn btn btn-success">Add
+                                                                    Sub-Category</a>
+                                                                <div id="SubCatForm" class="SubCatForm"
+                                                                    style="display: none;">
+                                                                    <form action="{{ route('addcategory') }}"
+                                                                        enctype="multipart/form-data" method="POST"
+                                                                        class="sub-category-form"
+                                                                        id="subCategoryForm_${cleangroup}">
+                                                                        @csrf
+                                                                        <input type="text" id="current_topic_id_sub"
+                                                                            class="current_topic_id_sub"
+                                                                            name="current_topic_id_sub" hidden
+                                                                            value="${category.topic_id}" />
+
+                                                                        <label for="cat_title" class="form-label">Sub
+                                                                            Category <i>(like No TOC Provided, TOC not as
+                                                                                per standards etc...)</i></label>
+
+                                                                        <input hidden type="text" class="form-control"
+                                                                            id="cat_title" name="cat_title" required
+                                                                            value="${category.group}">
+
+                                                                        <input type="text" class="form-control"
+                                                                            id="sub_cat_title" name="sub_cat_title" required
+                                                                            value="">
+
+                                                                        <label for="sub_cat_description"
+                                                                            class="form-label">Description</label>
+
+                                                                        <textarea class="form-control" id="sub_cat_description" name="sub_cat_description" required value=""></textarea>
+                                                                        <button type="button"
+                                                                            class="btn btn-primary ajax-submit-btn"
+                                                                            data-form-id="${cleangroup}">
+                                                                            {{ __('Save Category') }}
+                                                                        </button>
+
+                                                                    </form>
+
+                                                                </div>
+                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            `;
+
+                                            return accordionHTML;
+                                        }
+
+                                        function generateInnerAccordion(category) {
+                                            // Escape HTML entities in the title and description to prevent XSS attacks
+                                            var escapedTitle = $('<div>').text(category.title).html();
+                                            var escapedDescription = $('<div>').text(category.description).html();
+
+                                            // Build the accordion HTML based on the provided data
+                                            var accordionHTML = `
+                                            <li class="list-group-item subcat-items p-2"
+                                                                        data-category-id="${category.category_id}">
+                                                                        <button
+                                                                            class="btn btn-primary- btn-sm mt-2 subcat-btn-plus-minus accordion-button collapsed">
+
+                                                                            <span
+                                                                                class="category-title">${category.title }</span>
+                                                                        </button>
+
+                                                                        <div class="description d-none ">
+                                                                            <div class="d-flex flex-column">
+                                                                                <div>${category.description}</div>
+                                                                                <label class="p-3 ">
+                                                                                    <input type="checkbox"
+                                                                                        class="me-2 ms-3 chk sub-checkbox d-none selected2"
+                                                                                        data-category-id="${category.category_id}"checked /><a
+                                                                                        onclick="toggleTextWithIcon(this)"
+                                                                                        class="px-3 py-1 text-white bg-success insert-button-class rounded active bg-danger"
+                                                                                        style="cursor: pointer;"><i class="bi bi-arrow-left"></i> Remove</a>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                            `;
+
+                                            return accordionHTML;
+                                        }
+
+
+                                    });
+                                </script>
+
                             </div>
                         </div>
                         <div class="col-9 mt-2">
@@ -195,7 +586,11 @@
             })
             var spanElement = document.querySelector('.insert-button-class');
 
+
+
             function toggleTextWithIcon(spanElement) {
+                console.log("Text Button Clicked");
+                console.log(spanElement);
                 // Check the current state
                 if (spanElement.classList.contains('active')) {
                     // Toggle to the first state
@@ -209,6 +604,7 @@
                     spanElement.innerHTML = '<i class="bi bi-arrow-left"></i> Remove';
                     spanElement.classList.add('active');
                     spanElement.classList.add('bg-danger');
+
                     // spanElement.classList.remove('bg-success');
 
                 }
@@ -216,11 +612,11 @@
             $(document).ready(function() {
 
                 const selectedItemData = $('#selectedItemData');
-                const selectedItems = new Set();
+
                 const newlyAddedItems = new Set(); // Track newly added items
                 const itemElements = {}; // to keep track of list items
 
-                const items = <?= Auth::user()->definecategories ?>;
+
 
                 // Function to initialize TinyMCE for a specific element
                 function initializeTinyMCE(elementId) {
@@ -251,16 +647,16 @@
 
                     const elementId = `description_112233`;
                     selectedItemData.append(`
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6"></textarea>
-                            <hr />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6"></textarea>
+                                    <hr />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>`);
+                    </div>`);
 
                     var descriptionHTML = "";
 
@@ -268,24 +664,14 @@
                     selectedItems.forEach(itemId => {
                         const selectedItem = items.find(item => item.id === itemId);
                         if (selectedItem) {
-                            /*const elementId = `description_${selectedItem.id}`;
-                                                                                selectedItemData.append(`
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <input type="text" class="form-control mb-2" id="title_${selectedItem.id}" name="title" value="${selectedItem.title}">
-                                    <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6">${selectedItem.description}</textarea>
-                                    <hr />
-                                </div>
-                            </div>
-                        </div>
-                    </div>`);*/
 
                             descriptionHTML += '<p><strong>' + selectedItem.title + '</strong></p>';
                             descriptionHTML += '<p>' + selectedItem.description + '</p>';
                         }
                     });
+
+
+
 
                     jQuery("#description_112233").val(descriptionHTML);
 
@@ -297,18 +683,18 @@
                     newlyAddedItems.forEach(itemId => {
                         const elementId = `description_${itemId}`;
                         selectedItemData.append(`
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <input type="text" class="form-control mb-2" id="title_${itemId}" name="title" value="">
-                                    <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6"></textarea>
-                                    <hr />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `);
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control mb-2" id="title_${itemId}" name="title" value="">
+                                                    <textarea class="form-control tinymce" id="${elementId}" name="description" rows="6"></textarea>
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
 
                         // Initialize TinyMCE for the current element
                         initializeTinyMCE(elementId);
@@ -350,21 +736,25 @@
 
                 // Attach click event to entire list items
                 function setupClickEvent(topicId) {
-                    const itemList = $(`#itemList_${topicId}`);
+                    // const itemList = $(`#itemList_${topicId}`);
 
-                    itemList.on('click', 'li .sub-checkbox', function() {
+                    // itemList.on('click', 'li .sub-checkbox', function() {
+
+                    $(document).on('click', 'li .sub-checkbox', function() {
 
                         const categoryId = $(this).data('category-id');
+                        console.log("Li Clicked");
 
 
 
                         $(this).toggleClass('selected2');
 
                         if ($(this).is(':checked')) {
-
+                            console.log("Within First Condition");
                             selectedItems.add(categoryId);
                             newlyAddedItems.delete(categoryId); // Remove from newly added items
                         } else {
+                            console.log("Within Else Condition");
                             selectedItems.delete(categoryId);
                         }
 
@@ -464,13 +854,6 @@
                     // Initialize TinyMCE for the current element
                     initializeTinyMCE(`description_${newItemId}`);
                 });
-
-                // Function to reset selected items when switching tabs
-                // window.resetSelectedItems = function() {
-                //     selectedItems.clear();
-                //     newlyAddedItems.clear();
-                //     renderSelectedItemsData();
-                // };
                 window.resetSelectedItems = function() {
                     selectedItems.clear();
                     newlyAddedItems.clear();
@@ -489,7 +872,7 @@
                 jQuery(document).on('click', '#btnCopyText', function() {
                     var descriptionHTML = getSelectedItemsData();
                     navigator.clipboard.writeText(descriptionHTML).then(function() {
-                        console.log('Text copied to clipboard: ' + descriptionHTML);
+
                     }).catch(function(err) {
                         console.error('Unable to copy text: ', err);
                     });
@@ -513,6 +896,16 @@
                 // Store the active tab ID in sessionStorage
                 sessionStorage.setItem('activeTabId', tabId);
 
+                // Set the active tab ID to the hidden input field
+                document.getElementById('current_topic_id').value = tabId;
+                var elements = document.getElementsByClassName('current_topic_id_sub');
+
+                // Set the new value for each element
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].value = tabId;
+                }
+                // document.getElementById('current_topic_id_sub').value = tabId;
+
                 return tabId;
             }
 
@@ -523,7 +916,9 @@
 
                     // Get the new active tab ID when a tab is clicked
                     const newActiveTabId = getActiveTabId(tabLink);
-                    console.log('New Active Tab ID:', newActiveTabId);
+                    currentTopicId = newActiveTabId;
+
+
 
                     // Add your logic here to handle the new active tab ID
                 });
@@ -534,8 +929,7 @@
 
             // If there is a stored active tab ID, set the corresponding tab as active
             if (storedActiveTabId) {
-                const activeTabLink = document.querySelector(
-                    `#customTabs .nav-link[href="#tab-${storedActiveTabId}"]`);
+                const activeTabLink = document.querySelector(`#customTabs .nav-link[href="#tab-${storedActiveTabId}"]`);
                 if (activeTabLink) {
                     // Remove 'active' class from all tabs
                     document.querySelectorAll('#customTabs .nav-link').forEach(tabLink => {
@@ -544,6 +938,16 @@
 
                     // Add 'active' class to the stored active tab
                     activeTabLink.classList.add('active');
+
+                    // Set the stored active tab ID to the hidden input field
+                    document.getElementById('current_topic_id').value = storedActiveTabId;
+                    var elements = document.getElementsByClassName('current_topic_id_sub');
+
+                    // Set the new value for each element
+                    for (var i = 0; i < elements.length; i++) {
+                        elements[i].value = storedActiveTabId;
+                    }
+                    // document.getElementById('current_topic_id_sub').value = storedActiveTabId;
                 }
             }
 
@@ -589,7 +993,7 @@
 
                 const activeTab = urlParams.get('active_tab');
 
-                console.log(urlParams.get('active_tab'));
+                // console.log(urlParams.get('active_tab'));
 
 
 

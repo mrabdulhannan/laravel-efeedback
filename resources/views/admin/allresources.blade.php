@@ -31,6 +31,9 @@
             /* Enable text wrapping */
 
         }
+        a:hover {
+  text-decoration: underline;
+}
     </style>
 @endpush
 
@@ -66,41 +69,38 @@
                                                 <thead>
                                                     <tr>
                                                         <th>File Name</th>
-                                                        <th>File Path</th>
-                                                        <th>Small Preview</th>
-                                                        <th>Date Created</th>
+                                                        <th>Date Uploaded</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach (Auth::user()->resources as $file)
                                                         <tr>
-                                                            <td>{{ $file->file_name }}</td>
                                                             <td>
                                                                 <a href="{{ asset('storage/' . $file->file_path) }}"
-                                                                    target="_blank">Click Here to Open File</a>
+                                                                    target="_blank" class="link-primary ">{{ $file->file_name }}</a>
                                                             </td>
-                                                            <td>
-                                                                @if (Str::contains($file->file_path, ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg']))
-                                                                    {{-- <img src="{{ asset($file->file_path) }}" > --}}
-                                                                    <img src="{{ asset('storage/' . $file->file_path) }}"
-                                                                        alt="Preview" style="max-width: 50px;">
-                                                                @else
-                                                                    <!-- Handle non-image files (e.g., show a generic icon) -->
-                                                                    <i class="fa fa-file"></i>
-                                                                @endif
-                                                            </td>
+                                                            
                                                             <td>{{ $file->created_at }}</td>
                                                             <td>
-                                                                <form
+                                                                <div class="d-flex">
+                                                                    <div>
+                                                                        <form
                                                                     action="{{ route('file.destroy', ['id' => $file->id, 'filename' => basename($file->file_path)]) }}"
                                                                     method="post"
                                                                     onsubmit="return confirm('Are you sure you want to delete this file?')">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit"
-                                                                        class="btn btn-danger btn-sm">Delete</button>
+                                                                        class="btn btn-danger btn-sm"><span class="bi bi-trash"></span></button>
                                                                 </form>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span><a href="{{ asset('storage/' . $file->file_path) }}" class="btn btn-success"> View</a></span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                
                                                             </td>
 
                                                         </tr>

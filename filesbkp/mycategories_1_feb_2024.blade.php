@@ -32,43 +32,23 @@
             content: '' !important;
         }
     </style>
-    <style>
+     <style>
         .accordion-item {
             position: relative;
             padding: 0 0 0 25px;
         }
-
         .accordion-item::before {
             position: absolute;
-            left: 9px;
-            top: 27px;
-            bottom: 3px;
-            width: 11px;
-            background: transparent;
+            left: 7px;
+            top: 16px;
+            bottom: 16px;
+            width: 2px;
             content: '';
-            border: dotted gray;
+            border: 4px dotted gray;
+            width: 10px;
+            z-index: 99;
+            height: 22px;
             cursor: move;
-            height: 17px;
-            transform: translateY(-50%);
-        }
-
-        .list-group-item{
-            position: relative;
-            padding: 0 0 0 25px;
-        }
-        .list-group .list-group-item{padding-left: 2rem !important;}
-        .list-group-item:before{
-            position: absolute;
-            left: 9px;
-            top: 38px;
-            bottom: 3px;
-            width: 11px;
-            background: transparent;
-            content: '';
-            border: dotted gray;
-            cursor: move;
-            height: 17px;
-            transform: translateY(-50%);
         }
     </style>
 @endpush
@@ -185,11 +165,9 @@
                                                                     aria-labelledby="heading_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}"
                                                                     data-bs-parent="#accordion_{{ $topic->id }}_{{ str_replace(' ', '_', $group) }}">
                                                                     <div class="accordion-body">
-                                                                        <ul class="list-group"
-                                                                            id="itemsListAccordian-{{ $cleanGroup }}">
+                                                                        <ul class="list-group" id="itemsList">
                                                                             @foreach ($categories as $category)
-                                                                                <li data-categoryid="{{ $category->id }}"
-                                                                                    data-categoryorder="{{ $category->category_order }}"
+                                                                                <li
                                                                                     class="list-group-item d-flex justify-content-between align-items-center">
                                                                                     <div>
                                                                                         <h5 class="mb-1">
@@ -275,25 +253,35 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function() {
-           
+            // Make the list items sortable
+            // $("#itemsList").sortable({
+            //     update: function(event, ui) {
+            //         //  updateOrder();
+            //         console.log("Cahnge Ocuur")
+
+            //     }
+            // });   
+
             $('[id^="itemsListAccordian"]').sortable({
                 update: function(event, ui) {
                     console.log("Change Occurred");
                     // Extract the group value and order from the dragged item
                     var groupValue = $(ui.item).data('groupvalue');
                     var groupOrder = $(ui.item).data('grouporder');
-                  
+
+                    // Extract the order of categories within the group
+                    var categoryOrder = $(this).sortable('toArray', {
+                        attribute: 'data-category-id'
+                    });
+
                     // Extract all group values and orders
                     var groupData = [];
-                    var categoryData = [];
 
 
                     $('[data-groupvalue]').each(function() {
 
                         let group = $(this).data('groupvalue');
                         let order = $(this).data('grouporder');
-
-
 
                         if (order === null || order === undefined || order === 'null' ||
                             order === "") {
@@ -305,24 +293,27 @@
                             group: group,
                             order: order
                         });
-
-
-
                     });
 
-                    $('[data-categoryid]').each(function() {
-                       
-                        var categoryId = $(this).data('categoryid');
-                        var categoryOrder = $(this).data('categoryorder');
-
-                        categoryData.push({
-                            categoryId: categoryId,
-                            categoryOrder: categoryOrder
-                        });
-
-                    });
-
-
+                    // AJAX call to update the order
+                    // $.ajax({
+                    //     type: 'POST',
+                    //     url: '{{ route('updateGroupOrder') }}',
+                    //     data: {
+                    // group_id: groupID,
+                    // category_order: categoryOrder
+                    //         _token: '{{ csrf_token() }}'
+                    //     },
+                    //     success: function(response) {
+                    //         console.log(response);
+                    //         // Handle success response if needed
+                    //         console.log('Order updated successfully');
+                    //     },
+                    //     error: function(error) {
+                    //         // Handle error if needed
+                    //         console.error('Error updating order:', error);
+                    //     }
+                    // });
                     $.ajax({
                         type: "POST",
                         url: "{{ route('updateGroupOrder') }}",
@@ -330,7 +321,6 @@
                             group_id: groupValue,
                             group_order: groupOrder,
                             all_groups: groupData,
-                            category_data: categoryData,
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
@@ -341,10 +331,7 @@
                         }
                     });
                 }
-
-
             });
-          
         });
     </script>
 @endpush
